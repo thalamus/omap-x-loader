@@ -1,0 +1,48 @@
+#
+# NOTE! Don't add files that are generated in specific
+# subdirectories here. Add them in the ".gitignore" file
+# in that subdirectory instead.
+#
+# Normal rules
+#
+.*
+*.o
+*.o.*
+*.a
+*.s
+*.ko
+*.so
+*.so.dbg
+*.mod.c
+*.i
+*.lst
+*.symtypes
+
+#
+# Top-level generic files
+#
+x-load
+x-load.*
+System.map
+include/asm/arch
+include/asm/proc
+include/config.h
+include/config.mk
+!.gitignore
+
+#
+# Generated include files
+#
+
+# stgit generated dirs
+patches-*
+
+# quilt's files
+patches
+series
+
+# cscope files
+cscope.*
+
+*.orig
+*.rej
