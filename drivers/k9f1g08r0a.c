@@ -43,6 +43,7 @@
 #define MT29F1G_MFR		0x2c  /* Micron */
 #define MT29F1G_ID		0xa1  /* x8, 1GiB */
 #define MT29F2G_ID      0xba  /* x16, 2GiB */
+#define MT29F4G_ID      0xbc  /* x16, 4GiB */
 
 #define ADDR_COLUMN		1          
 #define ADDR_PAGE		2             
@@ -180,10 +181,12 @@ int nand_chip()
 
 	NAND_DISABLE_CE();
 
-	if (get_cpu_rev() == CPU_3430_ES2)
-		return (mfr != MT29F1G_MFR || !(id == MT29F1G_ID || id == MT29F2G_ID));
-	else
-	  	return (mfr != K9F1G08R0A_MFR || id != K9F1G08R0A_ID);
+	/* Check Micron part or Samsung part */
+	if ((mfr == MT29F1G_MFR && (id == MT29F1G_ID || id == MT29F2G_ID || id == MT29F4G_ID)) ||
+	    (mfr == K9F1G08R0A_MFR && (id == K9F1G08R0A_ID)) ){
+		   return 0;
+	}
+	return 1;
 }
 
 /* read a block data to buf
