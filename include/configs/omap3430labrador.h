@@ -48,12 +48,7 @@
  
 /* Clock Defines */
 #define V_OSCK                   26000000  /* Clock output from T2 */
-
-#if (V_OSCK > 19200000)          
-#define V_SCLK                   (V_OSCK >> 1)
-#else
 #define V_SCLK                   V_OSCK
-#endif
 
 //#define PRCM_CLK_CFG2_266MHZ   1    /* VDD2=1.15v - 133MHz DDR */
 #define PRCM_CLK_CFG2_332MHZ     1    /* VDD2=1.15v - 166MHz DDR */
