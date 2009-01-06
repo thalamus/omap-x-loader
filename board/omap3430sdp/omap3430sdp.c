@@ -172,7 +172,7 @@ void config_3430sdram_ddr(void)
 	/* set timing */
 	__raw_writel(SDP_SDRC_ACTIM_CTRLA_0, SDRC_ACTIM_CTRLA_0);
 	__raw_writel(SDP_SDRC_ACTIM_CTRLB_0, SDRC_ACTIM_CTRLB_0);
-	__raw_writel(SDP_SDRC_RFR_CTRL, SDRC_RFR_CTRL);
+	__raw_writel(SDP_SDRC_RFR_CTRL, SDRC_RFR_CTRL_0);
 
 	/* init sequence for mDDR/mSDR using manual commands (DDR is different) */
 	__raw_writel(CMD_NOP, SDRC_MANUAL_0);

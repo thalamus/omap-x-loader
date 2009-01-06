@@ -166,13 +166,14 @@ void config_3430sdram_ddr(void)
 	/* setup sdrc to ball mux */
 	__raw_writel(SDP_SDRC_SHARING, SDRC_SHARING);
 
+	/* Configure the first chip select */
 	/* set mdcfg */
 	__raw_writel(SDP_SDRC_MDCFG_0_DDR, SDRC_MCFG_0);
 
 	/* set timing */
 	__raw_writel(SDP_SDRC_ACTIM_CTRLA_0, SDRC_ACTIM_CTRLA_0);
 	__raw_writel(SDP_SDRC_ACTIM_CTRLB_0, SDRC_ACTIM_CTRLB_0);
-	__raw_writel(SDP_SDRC_RFR_CTRL, SDRC_RFR_CTRL);
+	__raw_writel(SDP_SDRC_RFR_CTRL, SDRC_RFR_CTRL_0);
 
 	/* init sequence for mDDR/mSDR using manual commands (DDR is different) */
 	__raw_writel(CMD_NOP, SDRC_MANUAL_0);
@@ -183,8 +184,32 @@ void config_3430sdram_ddr(void)
 
 	/* set mr0 */
 	__raw_writel(SDP_SDRC_MR_0_DDR, SDRC_MR_0);
+#ifdef CONFIG_2GBDDR
+	__raw_writel(SDP_SDRC_MDCFG_0_DDR, SDRC_MCFG_1);
 
-	/* set up dll */
+	/* set timing */
+	__raw_writel(SDP_SDRC_ACTIM_CTRLA_0, SDRC_ACTIM_CTRLA_1);
+	__raw_writel(SDP_SDRC_ACTIM_CTRLB_0, SDRC_ACTIM_CTRLB_1);
+	__raw_writel(SDP_SDRC_RFR_CTRL, SDRC_RFR_CTRL_1);
+
+	/* init sequence for mDDR/mSDR using manual commands (DDR is different) */
+	__raw_writel(CMD_NOP, SDRC_MANUAL_1);
+	delay(5000);
+	__raw_writel(CMD_PRECHARGE, SDRC_MANUAL_1);
+	__raw_writel(CMD_AUTOREFRESH, SDRC_MANUAL_1);
+	__raw_writel(CMD_AUTOREFRESH, SDRC_MANUAL_1);
+
+	/* set mr0 */
+	__raw_writel(SDP_SDRC_MR_0_DDR, SDRC_MR_1);
+	/* Configure cs1 to be just behind cs0 - 128meg boundary */
+	__raw_writel(0x1, SDRC_CS_CFG);
+
+	/* set up dllB-CS1 */
+	__raw_writel(SDP_SDRC_DLLAB_CTRL, SDRC_DLLB_CTRL);
+	delay(0x2000);	/* give time to lock */
+#endif
+
+	/* set up dllA-CS0 */
 	__raw_writel(SDP_SDRC_DLLAB_CTRL, SDRC_DLLA_CTRL);
 	delay(0x2000);	/* give time to lock */
 
@@ -691,6 +716,9 @@ void per_clocks_enable(void)
 void set_muxconf_regs(void)
 {
 	MUX_DEFAULT();
+#ifdef CONFIG_2GBDDR
+	MUX_VAL(CP(sdrc_cke1),      (IDIS | PTU | EN  | M0)) /*sdrc_cke1 */
+#endif
 }
 
 /**********************************************************
