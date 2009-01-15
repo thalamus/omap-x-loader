@@ -38,7 +38,8 @@
 #ifdef CFG_PRINTF
 int print_info(void)
 {
-	 printf("\n\nTexas Instruments X-Loader 1.41\n"); 
+	printf ("\n\nTexas Instruments X-Loader 1.41 ("
+		__DATE__ " - " __TIME__ ")\n");
 	return 0;
 }
 #endif
