@@ -29,6 +29,7 @@ include/asm/proc
 include/config.h
 include/config.mk
 !.gitignore
+signGP
 
 #
 # Generated include files
