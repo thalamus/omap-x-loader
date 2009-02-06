@@ -22,7 +22,7 @@
 #
 PLATFORM_RELFLAGS += -fno-strict-aliasing  -fno-common -ffixed-r8
 
-PLATFORM_CPPFLAGS += -march=armv7a
+PLATFORM_CPPFLAGS += -march=armv7-a
 # =========================================================================
 #
 # Supply options according to compiler version
