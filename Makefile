@@ -180,7 +180,7 @@ clobber:	clean
 		| xargs rm -f
 	rm -f $(OBJS) *.bak tags TAGS
 	rm -fr *.*~
-	rm -f x-load x-load.map $(ALL) x-load.bin.ift signGP
+	rm -f x-load x-load.map $(ALL) x-load.bin.ift signGP MLO
 	rm -f include/asm/proc include/asm/arch
 
 mrproper \

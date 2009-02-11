@@ -30,6 +30,7 @@ include/config.h
 include/config.mk
 !.gitignore
 signGP
+MLO
 
 #
 # Generated include files
