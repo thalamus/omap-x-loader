@@ -56,8 +56,15 @@
 #define MAX_NUM_PAGES		64
 
 #define ECC_CHECK_ENABLE
-#define ECC_SIZE		24
 #define ECC_STEPS		3
+
+#ifdef CFG_SW_ECC_512
+#define ECC_BLOCK_SIZE 512
+#define ECC_SIZE	12
+#else
+#define ECC_BLOCK_SIZE 256
+#define ECC_SIZE	24
+#endif
 
 /*******************************************************
  * Routine: delay
@@ -246,14 +253,23 @@ static int nand_read_page(u_char *buf, ulong page_addr)
 	/* A delay seems to be helping here. needs more investigation */
 	delay(10000);
 	len = (bus_width == 16) ? PAGE_SIZE >> 1 : PAGE_SIZE;
+
+#ifdef NAND_16BIT
+	p = (u16 *)buf;
+#else
 	p = buf;
+#endif
 	for (cntr = 0; cntr < len; cntr++){
 		*p++ = READ_NAND(NAND_ADDR);
 		delay(10);
    	}
 	
 #ifdef ECC_CHECK_ENABLE
+#ifdef NAND_16BIT
+	p = (u16 *)oob_buf;
+#else
 	p = oob_buf;
+#endif
         len = (bus_width == 16) ? OOB_SIZE >> 1 : OOB_SIZE;
 	for (cntr = 0; cntr < len; cntr++){
 		*p++ = READ_NAND(NAND_ADDR);
@@ -266,18 +282,19 @@ static int nand_read_page(u_char *buf, ulong page_addr)
 	for (cntr = 0; cntr < ECC_SIZE; cntr++)
 		ecc_code[cntr] =  oob_buf[ecc_pos[cntr]];
 
-	for(count = 0; count < ECC_SIZE; count += ECC_STEPS) {
+	for (count = 0, cntr = 0; cntr < PAGE_SIZE / ECC_BLOCK_SIZE;
+					cntr++, count += ECC_STEPS) {
  		nand_calculate_ecc (buf, &ecc_calc[0]);
 		if (nand_correct_data (buf, &ecc_code[count], &ecc_calc[0]) == -1) {
  			printf ("ECC Failed, page 0x%08x\n", page_addr);
-			for (val=0; val <256; val++)
+			for (val = 0; val < ECC_BLOCK_SIZE; val++)
 				printf("%x ", buf[val]);
 			printf("\n");
 			for (;;);
   			return 1;
  		}
-		buf += 256;
-		page_addr += 256;
+		buf += ECC_BLOCK_SIZE;
+		page_addr += ECC_BLOCK_SIZE;
 	}
 #endif	
 	return 0;
@@ -291,11 +308,10 @@ static int nand_read_oob(u_char *buf, ulong page_addr)
 	int len;
 
 #ifdef NAND_16BIT
-	u16 *p;
+	u16 *p = (u16 *)buf;
 #else
-	u_char *p;
+	u_char *p = buf;
 #endif
-	p = buf;
         len = (bus_width == 16) ? OOB_SIZE >> 1 : OOB_SIZE;
 
   	NAND_ENABLE_CE();  /* set pin low */

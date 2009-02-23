@@ -1,6 +1,6 @@
 /*
  * (C) Copyright 2000 Texas Instruments
- * 
+ *
  * This file os based on the following u-boot file:
  *	common/cmd_nand.c
  *
@@ -24,6 +24,8 @@
  */
 
 #include <common.h>
+
+#ifndef CFG_SW_ECC_512
 
 /*
  * Pre-calculated 256-way 1 byte column parity
@@ -93,8 +95,8 @@ static void nand_trans_result(u_char reg2, u_char reg3,
  * Calculate 3 byte ECC code for 256 byte block
  */
 /* ECC Calculation is different between NAND and NAND Legacy code
- * in U-Boot. If NAND_LEGACY is enabled in u-boot it should be 
- * enabled in the config file in x-loader also 
+ * in U-Boot. If NAND_LEGACY is enabled in u-boot it should be
+ * enabled in the config file in x-loader also
  */
 void nand_calculate_ecc (const u_char *dat, u_char *ecc_code)
 {
@@ -216,7 +218,7 @@ int nand_correct_data (u_char *dat, u_char *read_ecc, u_char *calc_ecc)
 	/* Should never happen */
 	return -1;
 }
-#else
+#else /* not NAND_LEGACY */
 void nand_calculate_ecc(const u_char *dat, u_char *ecc_code)
 {
 	uint8_t idx, reg1, reg2, reg3, tmp1, tmp2;
@@ -323,4 +325,5 @@ int nand_correct_data(u_char *dat, u_char *read_ecc, u_char *calc_ecc)
 
 	return -1;
 }
-#endif
+#endif /* NAND_LEGACY */
+#endif /* ! CFG_SW_ECC_512 */
