@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2006-2008
+ * (C) Copyright 2006-2009
  * Texas Instruments, <www.ti.com>
  * Jian Zhang <jzhang@ti.com>
  * Richard Woodruff <r-woodruff2@ti.com>
@@ -28,6 +28,7 @@
 #include <asm/arch/mux.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/arch/sys_info.h>
+#include <asm/arch/rev.h>
 #include <asm/arch/clocks.h>
 #include <asm/arch/mem.h>
 
@@ -81,45 +82,6 @@ u32 get_device_type(void)
         int mode;
         mode = __raw_readl(CONTROL_STATUS) & (DEVICE_MASK);
         return(mode >>= 8);
-}
-
-/******************************************
- * get_cpu_rev(void) - extract version info
- ******************************************/
-u32 get_cpu_rev(void)
-{
-	u32 cpuid=0;
-	/* On ES1.0 the IDCODE register is not exposed on L4
-	 * so using CPU ID to differentiate
-	 * between ES2.0 and ES1.0.
-	 */
-	__asm__ __volatile__("mrc p15, 0, %0, c0, c0, 0":"=r" (cpuid));
-	if((cpuid  & 0xf) == 0x0)
-		return CPU_3430_ES1;
-	else
-		return CPU_3430_ES2;
-
-}
-
-/******************************************
- * cpu_is_3410(void) - returns true for 3410
- ******************************************/
-u32 cpu_is_3410(void)
-{
-	int status;
-	if(get_cpu_rev() < CPU_3430_ES2) {
-		return 0;
-	} else {
-		/* read scalability status and return 1 for 3410*/
-		status = __raw_readl(CONTROL_SCALABLE_OMAP_STATUS);
-		/* Check whether MPU frequency is set to 266 MHz which
-		 * is nominal for 3410. If yes return true else false
-		 */
-		if (((status >> 8) & 0x3) == 0x2)
-			return 1;
-		else
-			return 0;
-	}
 }
 
 /*****************************************************************
@@ -327,9 +289,9 @@ void prcm_init(void)
 	if(cpu_is_3410())
 		sil_index = 2;
 	else {
-		if(get_cpu_rev() == CPU_3430_ES1)
+		if(get_cpu_rev() == CPU_3XX_ES10)
 			sil_index = 0;
-		else if(get_cpu_rev() == CPU_3430_ES2)
+		else if(get_cpu_rev() >= CPU_3XX_ES20)
 			sil_index = 1;
 	}	
 
