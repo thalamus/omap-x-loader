@@ -156,13 +156,21 @@ omap3430sdp_config :    unconfig
 omap3430labrador_config :    unconfig
 	@./mkconfig $(@:_config=) arm omap3 omap3430labrador
 
-omap3430zoom2_config :    unconfig
-	@./mkconfig $(@:_config=) arm omap3 omap3430labrador
-
 omap3430labradordownload_config :    unconfig
 	@./mkconfig omap3430labrador arm omap3 omap3430labrador; \
 	echo "#define START_LOADB_DOWNLOAD" >> ./include/config-2.h; \
 	cat ./include/config.h >> ./include/config-2.h; \
+	mv ./include/config-2.h ./include/config.h
+
+omap3430zoom2_config :    unconfig
+	@./mkconfig $(@:_config=) arm omap3 omap3430labrador
+
+omap3430zoom2_512m_config :    unconfig
+	@./mkconfig $(@:_config=) arm omap3 omap3430labrador
+	sed -e ' s/CONFIG_3430ZOOM2/CONFIG_3430ZOOM2_512M/ ' < \
+	  ./include/configs/omap3430zoom2.h  | \
+	sed -e ' s/#define CFG_NAND 1/#undef CFG_NAND/ ' \
+	>> ./include/config-2.h; \
 	mv ./include/config-2.h ./include/config.h
 
 #########################################################################

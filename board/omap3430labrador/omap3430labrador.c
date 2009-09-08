@@ -163,8 +163,15 @@ void config_3430sdram_ddr(void)
 
 	/* set mr0 */
 	__raw_writel(SDP_SDRC_MR_0_DDR, SDRC_MR_1);
+
 	/* Configure cs1 to be just behind cs0 - 128meg boundary */
+#ifdef CONFIG_3430ZOOM2_512M
+	/* 2 * 128M = 256M for cs1 */
+	__raw_writel(0x2, SDRC_CS_CFG);
+#else
+	/* 1 * 128M = 128M for cs1 */
 	__raw_writel(0x1, SDRC_CS_CFG);
+#endif
 
 	/* set up dllB-CS1 */
 	__raw_writel(SDP_SDRC_DLLAB_CTRL, SDRC_DLLB_CTRL);
@@ -709,7 +716,7 @@ int nand_init(void)
 	__raw_writel( M_NAND_GPMC_CONFIG5, GPMC_CONFIG5 + GPMC_CONFIG_CS0);
 	__raw_writel( M_NAND_GPMC_CONFIG6, GPMC_CONFIG6 + GPMC_CONFIG_CS0);
 
-#else /* CFG_ONENAND */
+#elif CFG_ONENAND /* CFG_ONENAND */
 	__raw_writel( ONENAND_GPMC_CONFIG1, GPMC_CONFIG1 + GPMC_CONFIG_CS0);
 	__raw_writel( ONENAND_GPMC_CONFIG2, GPMC_CONFIG2 + GPMC_CONFIG_CS0);
 	__raw_writel( ONENAND_GPMC_CONFIG3, GPMC_CONFIG3 + GPMC_CONFIG_CS0);
@@ -731,7 +738,7 @@ int nand_init(void)
 #endif
 		return 1;
 	}
-#else
+#elif CFG_ONENAND
 	if (onenand_chip()){
 #ifdef CFG_PRINTF
 		printf("OneNAND Unsupported !\n");
