@@ -110,11 +110,12 @@
  */
 #ifdef CONFIG_OMAP44XX
 /* base address for indirect vectors (internal boot mode) */
-#define SRAM_OFFSET0			0x40000000
-#define SRAM_OFFSET1			0x002F0000
-#define SRAM_OFFSET2			0x00007800
-#define SRAM_VECT_CODE			(SRAM_OFFSET0|SRAM_OFFSET1|SRAM_OFFSET2)
-#define LOW_LEVEL_SRAM_STACK		0x402F7FFC
+#define SRAM_OFFSET0                    0x40000000
+#define SRAM_OFFSET1                    0x00300000
+#define SRAM_OFFSET2                    0x0000D000
+#define SRAM_OFFSET3                    0x00000800
+#define SRAM_VECT_CODE                  (SRAM_OFFSET0|SRAM_OFFSET1|SRAM_OFFSET2|SRAM_OFFSET3)
+#define LOW_LEVEL_SRAM_STACK            0x4030DFFC
 #endif
 
 #if defined(CONFIG_4430SDP)
