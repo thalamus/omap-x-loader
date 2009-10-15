@@ -82,7 +82,7 @@
 /*
  * Miscellaneous configurable options
  */
-#define CFG_LOADADDR             0x80008000
+#define CFG_LOADADDR             0x80e80000
   
 #undef	CFG_CLKS_IN_HZ		/* everything, incl board info, in Hz */
 #define CFG_ENV_SIZE		0x100 
