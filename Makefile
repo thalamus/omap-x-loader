@@ -153,6 +153,9 @@ omap2430sdp_config :    unconfig
 omap3430sdp_config :    unconfig
 	@./mkconfig $(@:_config=) arm omap3 omap3430sdp
 
+omap4430sdp_config :    unconfig
+	@./mkconfig $(@:_config=) arm omap4 omap4430sdp
+
 omap3430labrador_config :    unconfig
 	@./mkconfig $(@:_config=) arm omap3 omap3430labrador
 
