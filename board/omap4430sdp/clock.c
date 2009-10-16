@@ -205,7 +205,7 @@ static void configure_mpu_dpll(u32 clk_index)
 	sr32(CM_DIV_M2_DPLL_MPU, 0, 5, dpll_param_p->m2);
 
 	/* Lock the mpu dpll */
-	sr32(CM_CLKMODE_DPLL_MPU, 0, 3, PLL_LOCK);
+	sr32(CM_CLKMODE_DPLL_MPU, 0, 3, PLL_LOCK | 0x10);
 	wait_on_value(BIT0, 1, CM_IDLEST_DPLL_MPU, LDELAY);
 
 	return;
@@ -341,6 +341,39 @@ static void configure_usb_dpll(u32 clk_index)
 	return;
 }
 
+static void configure_core_dpll(u32 clk_index)
+{
+	dpll_param *dpll_param_p;
+
+	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
+	sr32(CM_CLKSEL_CORE, 0, 32, 0x110);
+
+	/* Unlock the CORE dpll */
+	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_MN_POWER_BYPASS);
+	wait_on_value(BIT0, 0, CM_IDLEST_DPLL_CORE, LDELAY);
+
+	/* Program USB DPLL */
+	dpll_param_p = &core_dpll_param[clk_index];
+
+	/* Disable autoidle */
+	sr32(CM_AUTOIDLE_DPLL_CORE, 0, 3, 0x0);
+
+	sr32(CM_CLKSEL_DPLL_CORE, 8, 11, dpll_param_p->m);
+	sr32(CM_CLKSEL_DPLL_CORE, 0, 6, dpll_param_p->n);
+	sr32(CM_DIV_M2_DPLL_CORE, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M3_DPLL_CORE, 0, 5, dpll_param_p->m3);
+	sr32(CM_DIV_M4_DPLL_CORE, 0, 5, dpll_param_p->m4);
+	sr32(CM_DIV_M5_DPLL_CORE, 0, 5, dpll_param_p->m5);
+	sr32(CM_DIV_M6_DPLL_CORE, 0, 5, dpll_param_p->m6);
+	sr32(CM_DIV_M7_DPLL_CORE, 0, 5, dpll_param_p->m7);
+
+	/* Lock the core dpll */
+	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_LOCK);
+	wait_on_value(BIT0, 1, CM_IDLEST_DPLL_CORE, LDELAY);
+
+	return;
+}
+
 static void enable_all_clocks(void)
 {
 	/* Enable Ducati clocks */
@@ -382,7 +415,7 @@ static void enable_all_clocks(void)
 	sr32(CM1_ABE_TIMER8_CLKCTRL, 0, 32, 0x2);
 	sr32(CM1_ABE_WDT3_CLKCTRL, 0, 32, 0x2);
 	/* Disable sleep transitions */
-	sr32(CM1_ABE_CLKSTCTRL, 0, 32, 0x3);
+	sr32(CM1_ABE_CLKSTCTRL, 0, 32, 0x0);
 
 	/* L4PER clocks */
 	sr32(CM_L4PER_CLKSTCTRL, 0, 32, 0x2);
@@ -443,15 +476,50 @@ static void enable_all_clocks(void)
 	sr32(CM_WKUP_KEYBOARD_CLKCTRL, 0, 32, 0x2);
 
 	sr32(CM_SDMA_CLKSTCTRL, 0, 32, 0x0);
+	sr32(CM_SDMA_SDMA_CLKCTRL, 0, 32, 0x2);
 	sr32(CM_MEMIF_CLKSTCTRL, 0, 32, 0x3);
+	sr32(CM_MEMIF_EMIF_1_CLKCTRL, 0, 32, 0x1);
+	sr32(CM_MEMIF_EMIF_2_CLKCTRL, 0, 32, 0x1);
 	sr32(CM_D2D_CLKSTCTRL, 0, 32, 0x3);
-
 	sr32(CM_L3_2_GPMC_CLKCTRL, 0, 32, 0x1);
+	sr32(CM_L3INSTR_L3_3_CLKCTRL, 0, 32, 0x1);
+	sr32(CM_L3INSTR_L3_INSTR_CLKCTRL, 0, 32, 0x1);
+	sr32(CM_L3INSTR_OCP_WP1_CLKCTRL, 0, 32, 0x1);
 
 	/* TODO: Some hack needed by MM: Clean this */
 	*(volatile int*)0x550809a0= 0x00000001;
 	*(volatile int*)0x55080a20= 0x00000007;
 
+	/* WDT clocks */
+	sr32(CM_WKUP_WDT1_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_WKUP_WDT2_CLKCTRL, 0, 32, 0x2);
+
+	/* Enable Camera clocks */
+	sr32(CM_CAM_CLKSTCTRL, 0, 32, 0x3);
+	sr32(CM_CAM_ISS_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_CAM_FDIF_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_CAM_CLKSTCTRL, 0, 32, 0x0);
+
+	/* Enable DSS clocks */
+	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x3);
+	sr32(CM_DSS_DSS_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_DSS_DEISS_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x0);
+
+	/* Enable SGX clocks */
+	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x3);
+	sr32(CM_SGX_SGX_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x0);
+
+	/* Enable hsi/unipro/usb clocks */
+	sr32(CM_L3INIT_HSI_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_UNIPRO1_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_HSUSBHOST_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_HSUSBOTG_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_HSUSBTLL_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_P1500_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_FSUSB_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_L3INIT_USBPHY_CLKCTRL, 0, 32, 0x2);
 	return;
 }
 
@@ -471,11 +539,7 @@ void prcm_init(void)
 	/* Configure all DPLL's at 100% OPP */
 	configure_mpu_dpll(clk_index - 1);
 	configure_iva_dpll(clk_index - 1);
-	/*
-	 * TODO: Core dpll needs to be locked from sram.
-	 *
-	configure_core_dpll();
-	 */
+	configure_core_dpll(clk_index - 1);
 	configure_per_dpll(clk_index - 1);
 	configure_abe_dpll(clk_index - 1);
 	configure_usb_dpll(clk_index - 1);
@@ -484,9 +548,6 @@ void prcm_init(void)
 	/* Enable all clocks */
 	enable_all_clocks();
 #endif
-
-	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
-	sr32(CM_CLKSEL_CORE, 0, 32, 0x110);
 
 	return;
 }
