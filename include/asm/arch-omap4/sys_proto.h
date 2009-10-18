@@ -22,6 +22,9 @@
 
 void prcm_init(void);
 void per_clocks_enable(void);
+void configure_core_dpll_no_lock(void);
+void lock_core_dpll(void);
+void lock_core_dpll_shadow(void);
 
 void memif_init(void);
 void sdrc_init(void);
