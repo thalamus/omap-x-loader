@@ -30,7 +30,6 @@
  */
 
 #include <config.h>
-#include <version.h>
 #if !defined(CONFIG_INTEGRATOR) && ! defined(CONFIG_ARCH_CINTEGRATOR)
 #include <asm/arch/cpu.h>
 #endif
