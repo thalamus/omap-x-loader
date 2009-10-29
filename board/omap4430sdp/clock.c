@@ -609,7 +609,7 @@ void prcm_init(void)
 	clk_index = readl(CM_SYS_CLKSEL);
 	if (!clk_index)
 		return; /* Sys clk uninitialized */
-
+	configure_core_dpll(clk_index - 1);
 	/* Configure all DPLL's at 100% OPP */
 	configure_mpu_dpll(clk_index - 1);
 	configure_iva_dpll(clk_index - 1);
