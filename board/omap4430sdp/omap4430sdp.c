@@ -554,7 +554,7 @@ void s_init(void)
 	 */
 	//setup_auxcr(get_device_type(), external_boot);
 
-	ddr_init();
+	//ddr_init();
 
 	prcm_init();
 

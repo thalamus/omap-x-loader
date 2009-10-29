@@ -12,7 +12,7 @@
 # (mem base + reserved)
 
 # For use with external or internal boots.
-TEXT_BASE = 0x40301000
+TEXT_BASE = 0x40304000
 
 
 # Handy to get symbols to debug ROM version.

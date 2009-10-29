@@ -52,7 +52,7 @@ init_fnc_t *init_sequence[] = {
  	serial_init,		/* serial communications setup */
 	print_info,
 #endif
-   	nand_init,		/* board specific nand init */
+   	//nand_init,		/* board specific nand init */
 	NULL,
 };
 
@@ -114,8 +114,9 @@ void start_armboot (void)
 	strcpy(boot_dev_name, "UART");
 	do_load_serial_bin (CFG_LOADADDR, 115200);
 #else
-	boot_device = __raw_readl(0x480029c0) & 0xff;
+	//boot_device = __raw_readl(0x480029c0) & 0xff;
 	buf = (uchar*) CFG_LOADADDR;
+	boot_device = 6;
 
 	switch(boot_device) {
 	case 0x03:
@@ -144,10 +145,11 @@ void start_armboot (void)
 		printf("Unsupported MMC slot!\n");
 		break;
 	case 0x06:
-		strcpy(boot_dev_name, "MMC/SD1");
+		printf("Jump to Uboot\n");
+		//strcpy(boot_dev_name, "MMC/SD1");
 #if defined(CONFIG_MMC)
-		if (mmc_read_bootloader(0, 1) != 0)
-			goto error;
+		//if (mmc_read_bootloader(0, 1) != 0)
+		//	goto error;
 #endif
 		break;
 	};
