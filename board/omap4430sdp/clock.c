@@ -349,9 +349,8 @@ static void configure_core_dpll(clk_index)
 	 * Set it to 38.4 MHz, in case ROM code is bypassed
 	 */
 	if (!clk_index)
-		*(volatile int*)0x4A306110 = 0x7; //CM_SYS_CLKSEL
+		return;
 
-	clk_index = clk_index - 1;
 	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
 	sr32(CM_CLKSEL_CORE, 0, 32, 0x110);
 
