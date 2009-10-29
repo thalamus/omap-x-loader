@@ -64,7 +64,8 @@
 #define OMAP44XX_L4_IO_BASE		OMAP44XX_CORE_L4_IO_BASE
 
 /* CONTROL */
-#define OMAP44XX_CTRL_BASE		(OMAP44XX_L4_IO_BASE+0x2000)
+//#define OMAP44XX_CTRL_BASE		(OMAP44XX_L4_IO_BASE+0x2000)
+#define OMAP44XX_CTRL_BASE		0x4a100000
 
 /* TAP information  dont know for 3430*/
 #define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
