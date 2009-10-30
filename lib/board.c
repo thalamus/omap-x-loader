@@ -104,6 +104,7 @@ void start_armboot (void)
 	uchar *buf;
 	char boot_dev_name[8];
 	u32 boot_device = 0;
+	volatile int loop=10;
  
    	for (init_fnc_ptr = init_sequence; *init_fnc_ptr; ++init_fnc_ptr) {
 		if ((*init_fnc_ptr)() != 0) {
@@ -117,7 +118,9 @@ void start_armboot (void)
 	//boot_device = __raw_readl(0x480029c0) & 0xff;
 	buf = (uchar*) CFG_LOADADDR;
 	boot_device = 6;
-
+		
+	printf("Looping 256 MB DDR configured on EMIF2!\n");
+	while(loop);	
 	switch(boot_device) {
 	case 0x03:
 		strcpy(boot_dev_name, "ONENAND");

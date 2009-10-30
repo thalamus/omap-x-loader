@@ -389,9 +389,10 @@ void configure_core_dpll_no_lock(void)
 	/* Get the sysclk speed from cm_sys_clksel
 	 * Set it to 38.4 MHz, in case ROM code is bypassed
 	 */
+	*(volatile int*)0x4A306110 = 0x7; /*ROM HACK : CM_SYS_CLKSEL*/
 	clk_index = readl(CM_SYS_CLKSEL);
 	if (!clk_index)
-		*(volatile int*)0x4A306110 = 0x7; //CM_SYS_CLKSEL
+		return
 
 	clk_index = clk_index - 1;
 	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
@@ -433,16 +434,17 @@ void lock_core_dpll_shadow(void)
 	/* Lock the core dpll using freq update method */
 	*(volatile int*)0x4A004120 = 10;	//(CM_CLKMODE_DPLL_CORE)
 
-	/* CM_SHADOW_FREQ_CONFIG1DLL_OVERRIDE = 0, DLL_RESET = 1,
+	/* CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */
-	*(volatile int*)0x4A004260 = 0x1709;
+	*(volatile int*)0x4A004260 = 0x170D;
 
 	/* Wait for Freq_Update to get cleared: CM_SHADOW_FREQ_CONFIG1 */
 	while( ( (*(volatile int*)0x4A004260) & 0x1) == 0x1 );
 
 	/* Wait for DPLL to Lock : CM_IDLEST_DPLL_CORE */
 	wait_on_value(BIT0, 1, CM_IDLEST_DPLL_CORE, LDELAY);
+	//lock_core_dpll();
 
 	return;
 }
@@ -608,7 +610,7 @@ void prcm_init(void)
 	clk_index = readl(CM_SYS_CLKSEL);
 	if (!clk_index)
 		return; /* Sys clk uninitialized */
-	configure_core_dpll(clk_index - 1);
+	//configure_core_dpll(clk_index - 1);
 	/* Configure all DPLL's at 100% OPP */
 	configure_mpu_dpll(clk_index - 1);
 	configure_iva_dpll(clk_index - 1);

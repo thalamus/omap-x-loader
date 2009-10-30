@@ -125,7 +125,7 @@
  * is just for same of completeness. This would be safer if auto
  * trasnitions are working
  */
-//#define FREQ_UPDATE_EMIF
+#define FREQ_UPDATE_EMIF
 
 /* EMIF Needs to be configured@19.2 MHz and shadow registers
  * should be programmed for new OPP.
@@ -303,8 +303,8 @@ static int emif_config(unsigned int base)
 	/*
 	 * EMIF_PWR_MGMT_CTRL
 	 */
-	*(volatile int*)(base + EMIF_PWR_MGMT_CTRL) = PWR_MGMT_CTRL;
-	*(volatile int*)(base + EMIF_PWR_MGMT_CTRL_SHDW) = PWR_MGMT_CTRL_OPP100;
+	//*(volatile int*)(base + EMIF_PWR_MGMT_CTRL) = PWR_MGMT_CTRL;
+	//*(volatile int*)(base + EMIF_PWR_MGMT_CTRL_SHDW) = PWR_MGMT_CTRL_OPP100;
 	/*
 	 * poll MR0 register (DAI bit)
 	 * REG_CS[31] = 0 -- Mode register command to CS0
@@ -421,9 +421,11 @@ static void ddr_init(void)
 	configure_core_dpll_no_lock();
 
 	/* No IDLE: BUG in SDC */
-	sr32(CM_MEMIF_CLKSTCTRL, 0, 32, 0x2);
-	while(((*(volatile int*)CM_MEMIF_CLKSTCTRL) & 0x700) != 0x700);
-	/* Configure EMIF14D */
+	//sr32(CM_MEMIF_CLKSTCTRL, 0, 32, 0x2);
+	//while(((*(volatile int*)CM_MEMIF_CLKSTCTRL) & 0x700) != 0x700);
+	*(volatile int*)(EMIF1_BASE + EMIF_PWR_MGMT_CTRL) = 0x0;
+	*(volatile int*)(EMIF2_BASE + EMIF_PWR_MGMT_CTRL) = 0x0;
+
 	base_addr = EMIF1_BASE;
 	emif_config(base_addr);
 
@@ -433,6 +435,20 @@ static void ddr_init(void)
 #ifdef FREQ_UPDATE_EMIF
 	/* Lock Core using shadow CM_SHADOW_FREQ_CONFIG1 */
 	lock_core_dpll_shadow();
+	/* TODO: SDC needs few hacks to get DDR freq update working */
+
+	/* Set DLL_OVERRIDE = 0 */
+	*(volatile int*)CM_DLL_CTRL = 0x0;
+
+	delay(200);
+
+	/* Check for DDR PHY ready for EMIF1 & EMIF2 */
+	while((((*(volatile int*)EMIF1_BASE + EMIF_STATUS)&(0x04)) != 0x04) \
+	|| (((*(volatile int*)EMIF2_BASE + EMIF_STATUS)&(0x04)) != 0x04));
+
+	/* Reprogram the DDR PYHY Control register */
+	/* PHY control values */
+
 #else
 	/* Lock Core dpll
 	 * FREQ update method is not working
@@ -461,6 +477,12 @@ static void ddr_init(void)
 
 	/* Put the Core Subsystem PD to ON State */
 	sr32(CM_MEMIF_EMIF_2_CLKCTRL, 0, 32, 0x30E03);
+
+	/* No IDLE: BUG in SDC */
+	//sr32(CM_MEMIF_CLKSTCTRL, 0, 32, 0x2);
+	//while(((*(volatile int*)CM_MEMIF_CLKSTCTRL) & 0x700) != 0x700);
+	*(volatile int*)(EMIF1_BASE + EMIF_PWR_MGMT_CTRL) = 0x80000000;
+	*(volatile int*)(EMIF2_BASE + EMIF_PWR_MGMT_CTRL) = 0x80000000;
 	/*
 	 * DMM : DMM_LISA_MAP_0(Section_0)
 	 * [31:24] SYS_ADDR 		0x80
@@ -471,7 +493,7 @@ static void ddr_init(void)
 	 * [7:0] SDRC_ADDR		0X0
 	 */
 	// *(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80700100;
-	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
+	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80400200;
 	/* TODO: Settings can be locked but kept open for TILER */
 	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_1) = 0x00000000;
 	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_2) = 0x00000000;
@@ -554,7 +576,7 @@ void s_init(void)
 	 */
 	//setup_auxcr(get_device_type(), external_boot);
 
-	//ddr_init();
+	ddr_init();
 
 	prcm_init();
 
