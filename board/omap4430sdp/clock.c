@@ -389,10 +389,8 @@ void configure_core_dpll_no_lock(void)
 	/* Get the sysclk speed from cm_sys_clksel
 	 * Set it to 38.4 MHz, in case ROM code is bypassed
 	 */
-	*(volatile int*)0x4A306110 = 0x7; /*ROM HACK : CM_SYS_CLKSEL*/
-	clk_index = readl(CM_SYS_CLKSEL);
-	if (!clk_index)
-		return
+	__raw_writel(0x7,CM_SYS_CLKSEL);
+	clk_index = 7;
 
 	clk_index = clk_index - 1;
 	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
@@ -606,11 +604,16 @@ void prcm_init(void)
 {
 	u32 clk_index;
 
-	/* Get the sysclk speed from cm_sys_clksel */
+	/* Get the sysclk speed from cm_sys_clksel
+	 * Set the CM_SYS_CLKSEL in case ROM code has not set
+	 */
+	__raw_writel(0x7,CM_SYS_CLKSEL);
 	clk_index = readl(CM_SYS_CLKSEL);
 	if (!clk_index)
 		return; /* Sys clk uninitialized */
-	//configure_core_dpll(clk_index - 1);
+	/* Core DPLL is locked using FREQ update method */
+	/* configure_core_dpll(clk_index - 1); */
+
 	/* Configure all DPLL's at 100% OPP */
 	configure_mpu_dpll(clk_index - 1);
 	configure_iva_dpll(clk_index - 1);
