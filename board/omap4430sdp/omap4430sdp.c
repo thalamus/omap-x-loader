@@ -690,7 +690,7 @@ int dram_init(void)
 	MV(CP(GPMC_NWP) , ( PTD | IEN | M0))  /* gpio_54 */ \
 	MV(CP(GPMC_CLK) , ( PTD | M3))  /* gpio_55 */ \
 	MV(CP(GPMC_NADV_ALE) , ( M0))  /* gpio_56 */ \
-	MV(CP(GPMC_NOE) , ( PTU | OFF_EN | OFF_OUT_PTD | M1))  /* sdmmc2_clk */ \
+	MV(CP(GPMC_NOE) , ( PTU | IEN | OFF_EN | OFF_OUT_PTD | M1))  /* sdmmc2_clk */ \
 	MV(CP(GPMC_NWE) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* sdmmc2_cmd */ \
 	MV(CP(GPMC_NBE0_CLE) , ( PTD | IEN | M0))  /* gpio_59 */ \
 	MV(CP(GPMC_NBE1) , ( PTD | M3))  /* gpio_60 */ \
