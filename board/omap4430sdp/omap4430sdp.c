@@ -414,6 +414,17 @@ static void ddr_init(void)
 {
 	unsigned int base_addr;
 
+	/* Configurte the Control Module DDRIO device */
+	__raw_writel(0x1c1c1c1c, 0x4A100638);
+	__raw_writel(0x1c1c1c1c, 0x4A10063c);
+	__raw_writel(0x1c1c1c1c, 0x4A100640);
+	__raw_writel(0x1c1c1c1c, 0x4A100648);
+	__raw_writel(0x1c1c1c1c, 0x4A10064c);
+	__raw_writel(0x1c1c1c1c, 0x4A100640);
+
+	/* LPDDR2IO set to NMOS PTV */
+	__raw_writel(0x00ffc000, 0x4A100704);
+
 	/* DDR needs to be initialised @ 19.2 MHz
 	 * So put core DPLL in bypass mode
 	 * Configure the Core DPLL but don't lock it
@@ -492,8 +503,10 @@ static void ddr_init(void)
 	 * [9:8] SDRC_MAP 		0x3
 	 * [7:0] SDRC_ADDR		0X0
 	 */
-	// *(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80700100;
-	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80400200;
+	/* 256 MB configeration */
+	/*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80400200; */
+	/* 512MB configeration */
+	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
 	/* TODO: Settings can be locked but kept open for TILER */
 	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_1) = 0x00000000;
 	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_2) = 0x00000000;
