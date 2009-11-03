@@ -119,7 +119,7 @@ void start_armboot (void)
 	buf = (uchar*) CFG_LOADADDR;
 	boot_device = 6;
 		
-	printf("Looping 256 MB DDR configured on EMIF2!\n");
+	printf("Looping 512MB DDR configured on EMIF2 and EMIF2\n");
 	while(loop);	
 	switch(boot_device) {
 	case 0x03:
