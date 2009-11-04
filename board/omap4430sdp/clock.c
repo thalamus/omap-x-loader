@@ -441,7 +441,7 @@ void lock_core_dpll_shadow(void)
 	/* CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */
-	*(volatile int*)0x4A004260 = 0x170D;
+	*(volatile int*)0x4A004260 = 0xF0D;
 
 	/* Wait for Freq_Update to get cleared: CM_SHADOW_FREQ_CONFIG1 */
 	while( ( (*(volatile int*)0x4A004260) & 0x1) == 0x1 );
