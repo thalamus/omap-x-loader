@@ -52,11 +52,6 @@ struct dpll_param {
  * Rows : 1 - 12M, 2 - 13M, 3 - 16.8M, 4 - 19.2M, 5 - 26M, 6 - 27M, 7 - 38.4M
  */
 
-/* Keep Default @ 33MHz at boot loader level i
- * On Phoenix board vlotage needs to be bumped up
- * before scaling the MPU up
- */
-/*#define CONFIG_MPU_600*/
 /* MPU parameters */
 struct dpll_param mpu_dpll_param[7] = {
 	/* 12M values */

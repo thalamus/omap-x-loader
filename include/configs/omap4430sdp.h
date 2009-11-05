@@ -39,7 +39,12 @@
 #define CONFIG_OMAP44XX          1    /* which is a 34XX */
 #define CONFIG_OMAP4430          1    /* which is in a 3430 */
 #define CONFIG_4430SDP           1    /* working with SDP */
-//#define CONFIG_3430_AS_3410	 1    /* true for 3430 in 3410 mode */
+
+/* Keep Default @ 33MHz at boot loader level
+ * On Phoenix board vlotage needs to be bumped up
+ * before scaling the MPU up
+ */
+#define CONFIG_MPU_600		1
 
 /* Enable the below macro if MMC boot support is required */
 //#define CONFIG_MMC               1

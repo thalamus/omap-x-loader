@@ -572,6 +572,35 @@ void try_unlock_memory(void)
 	return;
 }
 
+
+#ifdef CONFIG_MPU_600	
+static scale_vcore1(unsigned int voltage)
+{
+	/* PRM_VC_CFG_I2C_MODE */
+	*(volatile int*)(0x4A307BA8) = 0x0;
+	/* PRM_VC_CFG_I2C_CLK */	
+	*(volatile int*)(0x4A307BAC) = 0x6026;
+
+	/*/set VCORE1 force VSEL */
+	/* PRM_VC_VAL_BYPASS) */
+	*(volatile int*)(0x4A307BA0) = 0x395512;
+	*(volatile int*)(0x4A307BA0) |= 0x1000000;
+	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
+
+	/* PRM_IRQSTATUS_MPU */
+	*(volatile int*)(0x4A306010) = *(volatile int*)(0x4A306010);
+
+	/*set VCORE1 volt VSEL */
+	/*PRM_VC_VAL_BYPASS */
+	*(volatile int*)(0x4A307BA0) = 0x395612;
+	*(volatile int*)(0x4A307BA0) |= 0x1000000;
+	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
+
+	/* PRM_IRQSTATUS_MPU */
+	*(volatile int*)(0x4A306010) = *(volatile int*)(0x4A306010);
+}
+#endif
+
 /**********************************************************
  * Routine: s_init
  * Description: Does early system init of muxing and clocks.
@@ -591,6 +620,10 @@ void s_init(void)
 
 	ddr_init();
 
+/* Set VCORE1 = 1.3 V */
+#ifdef CONFIG_MPU_600	
+	scale_vcore1(1300);
+#endif	
 	prcm_init();
 
 }
