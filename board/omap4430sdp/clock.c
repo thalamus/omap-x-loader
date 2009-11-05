@@ -450,6 +450,8 @@ void lock_core_dpll_shadow(void)
 
 static void enable_all_clocks(void)
 {
+	volatile int regvalue = 0;
+
 	/* Enable Ducati clocks */
 	sr32(CM_DUCATI_DUCATI_CLKCTRL, 0, 32, 0x1);
 	sr32(CM_DUCATI_CLKSTCTRL, 0, 32, 0x2);
@@ -578,8 +580,10 @@ static void enable_all_clocks(void)
 	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x2);
 	sr32(CM_DSS_DSS_CLKCTRL, 0, 32, 0xf02);
 	sr32(CM_DSS_DEISS_CLKCTRL, 0, 32, 0x2);
+	/* Add a readback */
+	regvalue = *(volatile int*)0x4A309100;
 	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x0);
-	*(volatile int*)0x4A307100 = 0x3; //DSS_PRM
+	*(volatile int*)0x4A307100 = 0x3; //DSS_PRM	
 
 	/* Enable SGX clocks */
 	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x3);
