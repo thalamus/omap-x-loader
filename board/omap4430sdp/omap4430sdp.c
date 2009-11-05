@@ -454,8 +454,8 @@ static void ddr_init(void)
 	delay(200);
 
 	/* Check for DDR PHY ready for EMIF1 & EMIF2 */
-	while((((*(volatile int*)EMIF1_BASE + EMIF_STATUS)&(0x04)) != 0x04) \
-	|| (((*(volatile int*)EMIF2_BASE + EMIF_STATUS)&(0x04)) != 0x04));
+	while((((*(volatile int*)(EMIF1_BASE + EMIF_STATUS))&(0x04)) != 0x04) \
+	|| (((*(volatile int*)(EMIF2_BASE + EMIF_STATUS))&(0x04)) != 0x04));
 
 	/* Reprogram the DDR PYHY Control register */
 	/* PHY control values */
