@@ -852,7 +852,7 @@ int dram_init(void)
 	MV(CP(UART2_RX) , ( IEN | M0))  /* uart2_rx */ \
 	MV(CP(UART2_TX) , ( M0))  /* uart2_tx */ \
 	MV(CP(HDQ_SIO) , ( PTD | IEN | M3))  /* gpio_127 */ \
-	MV(CP(I2C1_SCL) , ( PTU | IEN | M0))  /* i2c1_scl */ \
+	MV(CP(I2C1_SCL) , ( IEN | M0))  /* i2c1_scl */ \
 	MV(CP(I2C1_SDA) , ( PTU | IEN | M0))  /* i2c1_sda */ \
 	MV(CP(I2C2_SCL) , ( PTU | IEN | M0))  /* i2c2_scl */ \
 	MV(CP(I2C2_SDA) , ( PTU | IEN | M0))  /* i2c2_sda */ \
@@ -1213,6 +1213,7 @@ int dram_init(void)
 void set_muxconf_regs(void)
 {
 	MUX_DEFAULT_OMAP4();
+	*(volatile int *)(OMAP44XX_CTRL_BASE + CONTROL_I2C_0) = 1; /* Disable Pull */
 	return;
 }
 
