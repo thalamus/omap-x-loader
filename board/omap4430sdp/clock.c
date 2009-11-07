@@ -581,7 +581,7 @@ static void enable_all_clocks(void)
 	sr32(CM_DSS_DSS_CLKCTRL, 0, 32, 0xf02);
 	sr32(CM_DSS_DEISS_CLKCTRL, 0, 32, 0x2);
 	/* Add a readback */
-	regvalue = *(volatile int*)0x4A309100;
+	regvalue = *(volatile int*)0x4A009100;
 	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x0);
 	*(volatile int*)0x4A307100 = 0x3; //DSS_PRM	
 
