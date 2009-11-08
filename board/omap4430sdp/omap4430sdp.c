@@ -759,24 +759,24 @@ int dram_init(void)
 	MV(CP(GPMC_A17) , ( PTD | M3))  /* gpio_41 */ \
 	MV(CP(GPMC_A18) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row6 */ \
 	MV(CP(GPMC_A19) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row7 */ \
-	MV(CP(GPMC_A20) , ( PTD | M3))  /* gpio_44 */ \
+	MV(CP(GPMC_A20) , ( M3))  /* gpio_44 */ \
 	MV(CP(GPMC_A21) , ( PTD | M3))  /* gpio_45 */ \
 	MV(CP(GPMC_A22) , ( OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col6 */ \
 	MV(CP(GPMC_A23) , ( OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col7 */ \
 	MV(CP(GPMC_A24) , ( PTD | M3))  /* gpio_48 */ \
 	MV(CP(GPMC_A25) , ( PTD | M3))  /* gpio_49 */ \
-	MV(CP(GPMC_NCS0) , ( PTU | IEN | M0))  /* gpio_50 */ \
+	MV(CP(GPMC_NCS0) , ( M3))  /* gpio_50 */ \
 	MV(CP(GPMC_NCS1) , ( IEN | M3))  /* gpio_51 */ \
 	MV(CP(GPMC_NCS2) , ( IEN | M3))  /* gpio_52 */ \
 	MV(CP(GPMC_NCS3) , ( IEN | M3))  /* gpio_53 */ \
-	MV(CP(GPMC_NWP) , ( PTD | IEN | M0))  /* gpio_54 */ \
+	MV(CP(GPMC_NWP) , ( M3))  /* gpio_54 */ \
 	MV(CP(GPMC_CLK) , ( PTD | M3))  /* gpio_55 */ \
-	MV(CP(GPMC_NADV_ALE) , ( M0))  /* gpio_56 */ \
+	MV(CP(GPMC_NADV_ALE) , ( M3))  /* gpio_56 */ \
 	MV(CP(GPMC_NOE) , ( PTU | IEN | OFF_EN | OFF_OUT_PTD | M1))  /* sdmmc2_clk */ \
 	MV(CP(GPMC_NWE) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* sdmmc2_cmd */ \
-	MV(CP(GPMC_NBE0_CLE) , ( PTD | IEN | M0))  /* gpio_59 */ \
+	MV(CP(GPMC_NBE0_CLE) , ( PTD | IEN | M3))  /* gpio_59 */ \
 	MV(CP(GPMC_NBE1) , ( PTD | M3))  /* gpio_60 */ \
-	MV(CP(GPMC_WAIT0) , ( PTU | IEN | M0))  /* gpio_61 */ \
+	MV(CP(GPMC_WAIT0) , ( PTU | IEN | M3))  /* gpio_61 */ \
 	MV(CP(GPMC_WAIT1) , ( IEN | M3))  /* gpio_62 */ \
 	MV(CP(C2C_DATA11) , ( PTD | M3))  /* gpio_100 */ \
 	MV(CP(C2C_DATA12) , ( M1))  /* dsi1_te0 */ \
@@ -793,10 +793,10 @@ int dram_init(void)
 	MV(CP(CSI21_DY1) , ( IEN | M0))  /* csi21_dy1 */ \
 	MV(CP(CSI21_DX2) , ( IEN | M0))  /* csi21_dx2 */ \
 	MV(CP(CSI21_DY2) , ( IEN | M0))  /* csi21_dy2 */ \
-	MV(CP(CSI21_DX3) , ( PTD | IEN | M0))  /* csi21_dx3 */ \
-	MV(CP(CSI21_DY3) , ( PTD | IEN | M0))  /* csi21_dy3 */ \
-	MV(CP(CSI21_DX4) , ( PTD | IEN | OFF_EN | OFF_PD | OFF_IN | M3))  /* gpi_75 */ \
-	MV(CP(CSI21_DY4) , ( PTD | IEN | OFF_EN | OFF_PD | OFF_IN | M3))  /* gpi_76 */ \
+	MV(CP(CSI21_DX3) , ( PTD | M7))  /* csi21_dx3 */ \
+	MV(CP(CSI21_DY3) , ( PTD | M7))  /* csi21_dy3 */ \
+	MV(CP(CSI21_DX4) , ( PTD | OFF_EN | OFF_PD | OFF_IN | M7))  /* csi21_dx4 */ \
+	MV(CP(CSI21_DY4) , ( PTD | OFF_EN | OFF_PD | OFF_IN | M7))  /* csi21_dy4 */ \
 	MV(CP(CSI22_DX0) , ( IEN | M0))  /* csi22_dx0 */ \
 	MV(CP(CSI22_DY0) , ( IEN | M0))  /* csi22_dy0 */ \
 	MV(CP(CSI22_DX1) , ( IEN | M0))  /* csi22_dx1 */ \
@@ -917,10 +917,10 @@ int dram_init(void)
 	MV(CP(SYS_NIRQ1) , ( PTU | IEN | M0))  /* sys_nirq1 */ \
 	MV(CP(SYS_NIRQ2) , ( PTU | IEN | M0))  /* sys_nirq2 */ \
 	MV(CP(SYS_BOOT0) , ( PTD | IEN | M3))  /* gpio_184 */ \
-	MV(CP(SYS_BOOT1) , ( PTD | IEN | M3))  /* gpio_185 */ \
+	MV(CP(SYS_BOOT1) , ( M3))  /* gpio_185 */ \
 	MV(CP(SYS_BOOT2) , ( PTD | IEN | M3))  /* gpio_186 */ \
-	MV(CP(SYS_BOOT3) , ( PTD | IEN | M3))  /* gpio_187 */ \
-	MV(CP(SYS_BOOT4) , ( PTD | IEN | M3))  /* gpio_188 */ \
+	MV(CP(SYS_BOOT3) , ( M3))  /* gpio_187 */ \
+	MV(CP(SYS_BOOT4) , ( M3))  /* gpio_188 */ \
 	MV(CP(SYS_BOOT5) , ( PTD | IEN | M3))  /* gpio_189 */ \
 	MV(CP(DPM_EMU0) , ( IEN | M0))  /* dpm_emu0 */ \
 	MV(CP(DPM_EMU1) , ( IEN | M0))  /* dpm_emu1 */ \
