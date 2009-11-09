@@ -577,13 +577,15 @@ static void enable_all_clocks(void)
 	sr32(CM_CAM_CLKSTCTRL, 0, 32, 0x0);
 
 	/* Enable DSS clocks */
+	/* PM_DSS_PWRSTCTRL ON State and LogicState = 1 (Retention) */
+	*(volatile int*)0x4A307100 = 0x7; //DSS_PRM
 	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x2);
 	sr32(CM_DSS_DSS_CLKCTRL, 0, 32, 0xf02);
 	sr32(CM_DSS_DEISS_CLKCTRL, 0, 32, 0x2);
-	/* Add a readback */
-	regvalue = *(volatile int*)0x4A009100;
-	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x0);
-	*(volatile int*)0x4A307100 = 0x3; //DSS_PRM	
+	/* Check for DSS Clocks */
+	while (((*(volatile int*)0x4A009100) & 0xF00) != 0xE00)
+	/* Set HW_AUTO transition mode */
+	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x3);
 
 	/* Enable SGX clocks */
 	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x3);
