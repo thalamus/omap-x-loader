@@ -47,10 +47,14 @@
 #define CONFIG_MPU_600		1
 
 /* Enable the below macro if MMC boot support is required */
-//#define CONFIG_MMC               1
+#define CONFIG_MMC               1
 #if defined(CONFIG_MMC)
-	#define CFG_CMD_MMC              1
-	#define CFG_CMD_FAT              1
+	/* To Enable MMC boot for OMAP4430 SDP */
+	//#define CONFIG_MMC1		1
+	/* To Enable EMMC boot for OMAP4430 SDP */
+	#define CONFIG_MMC2		1
+	#define CFG_CMD_MMC		1
+	#define CFG_CMD_FAT		1
 #endif
 
 #include <asm/arch/cpu.h>        /* get chip and board defs */

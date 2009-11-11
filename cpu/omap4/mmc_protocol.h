@@ -241,6 +241,6 @@ unsigned char mmc_send_command(unsigned int cmd, unsigned int arg,
 			       unsigned int *response);
 unsigned char mmc_setup_clock(unsigned int iclk, unsigned short clkd);
 unsigned char mmc_set_opendrain(unsigned char state);
-unsigned char mmc_read_data(unsigned int *output_buf);
+unsigned char mmc_read_data(unsigned int base, unsigned int *output_buf);
 
 #endif				/*MMC_PROTOCOL_H */

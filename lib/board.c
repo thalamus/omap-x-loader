@@ -69,26 +69,34 @@ char * strcpy(char * dest,const char *src)
 }
 #endif
 
-#ifdef CFG_CMD_FAT
+#ifdef CFG_CMD_MMC
 int mmc_read_bootloader(int dev, int part)
 {
-	long size;
-	unsigned long offset = CFG_LOADADDR;
-	block_dev_desc_t *dev_desc = NULL;
 	unsigned char ret = 0;
+	unsigned long offset = CFG_LOADADDR;
 
-	ret = mmc_init(1);
+	ret = mmc_init(dev);
 	if (ret != 0){
 		printf("\n MMC init failed \n");
 		return -1;
 	}
 
-	dev_desc = mmc_get_dev(dev);
-	fat_register_device(dev_desc, part);
-	size = file_fat_read("u-boot.bin", (unsigned char *)offset, 0);
-	if (size == -1)
-		return -1;
+#ifdef CFG_CMD_FAT
+	long size;
+	block_dev_desc_t *dev_desc = NULL;
 
+	if (part) {
+		dev_desc = mmc_get_dev(dev);
+		fat_register_device(dev_desc, part);
+		size = file_fat_read("u-boot.bin", (unsigned char *)offset, 0);
+		if (size == -1)
+			return -1;
+	} else {
+		/* FIXME: OMAP4 specific */
+		 mmc_read(dev, 0x400, (unsigned char *)CFG_LOADADDR,
+							0x00060000);
+	}
+#endif
 	return 0;
 }
 #endif
@@ -104,7 +112,6 @@ void start_armboot (void)
 	uchar *buf;
 	char boot_dev_name[8];
 	u32 boot_device = 0;
-	volatile int loop=10;
  
    	for (init_fnc_ptr = init_sequence; *init_fnc_ptr; ++init_fnc_ptr) {
 		if ((*init_fnc_ptr)() != 0) {
@@ -115,12 +122,17 @@ void start_armboot (void)
 	strcpy(boot_dev_name, "UART");
 	do_load_serial_bin (CFG_LOADADDR, 115200);
 #else
-	//boot_device = __raw_readl(0x480029c0) & 0xff;
-	buf = (uchar*) CFG_LOADADDR;
+
+#if defined(CONFIG_MMC1)
+	/* TODO to fix this */
+	/* boot_device = __raw_readl(0x480029c0) & 0xff; */
 	boot_device = 6;
-		
-	printf("Looping 512MB DDR configured on EMIF2 and EMIF2\n");
-	while(loop);	
+#endif
+#if defined(CONFIG_MMC2)
+	boot_device = 5;
+#endif
+	buf = (uchar *) CFG_LOADADDR;
+
 	switch(boot_device) {
 	case 0x03:
 		strcpy(boot_dev_name, "ONENAND");
@@ -145,14 +157,18 @@ void start_armboot (void)
 #endif
 		break;
 	case 0x05:
-		printf("Unsupported MMC slot!\n");
+		strcpy(boot_dev_name, "EMMC");
+#if defined(CONFIG_MMC)
+		if (mmc_read_bootloader(1, 0) != 0)
+			goto error;
+#endif
 		break;
 	case 0x06:
 		printf("Jump to Uboot\n");
-		//strcpy(boot_dev_name, "MMC/SD1");
+		strcpy(boot_dev_name, "MMC/SD1");
 #if defined(CONFIG_MMC)
-		//if (mmc_read_bootloader(0, 1) != 0)
-		//	goto error;
+		if (mmc_read_bootloader(0, 1) != 0)
+			goto error;
 #endif
 		break;
 	};
