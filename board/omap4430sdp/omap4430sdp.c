@@ -131,7 +131,7 @@
  */
 /* Elpida 2x2Gbit */
 #ifdef CONFIG_OMAP4_SDC
-#ifdef CORE_190MHZ
+#ifndef CORE_190MHZ
 	/*
 	 * EMIF_SDRAM_REF_CTRL
 	 * refresh rate = DDR_CLK / reg_refresh_rate
