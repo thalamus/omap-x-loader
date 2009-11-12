@@ -45,7 +45,7 @@
  * before scaling the MPU up
  */
 #define CONFIG_MPU_600		1
-
+//#define CORE_190MHZ		1
 /* Enable the below macro if MMC boot support is required */
 #define CONFIG_MMC               1
 #if defined(CONFIG_MMC)

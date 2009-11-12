@@ -126,12 +126,12 @@
  * trasnitions are working
  */
 #define FREQ_UPDATE_EMIF
-
 /* EMIF Needs to be configured@19.2 MHz and shadow registers
  * should be programmed for new OPP.
  */
 /* Elpida 2x2Gbit */
 #ifdef CONFIG_OMAP4_SDC
+#ifdef CORE_190MHZ
 	/*
 	 * EMIF_SDRAM_REF_CTRL
 	 * refresh rate = DDR_CLK / reg_refresh_rate
@@ -213,7 +213,30 @@
 #define PWR_MGMT_CTRL			0x40000000
 #define PWR_MGMT_CTRL_OPP100		0x80000000
 
-#else
+#else /* DDR @ 380.928 MHz */
+ 
+#define SDRAM_REF_CTRL                  0x0000004A
+#define SDRAM_REF_CTRL_OPP100           0x000005CD
+#define SDRAM_TIM_1                     0x04442049
+#define SDRAM_TIM_1_OPP100              0x10EB065A
+#define SDRAM_TIM_2                     0x1002008A
+#define SDRAM_TIM_2_OPP100              0x20370DD2
+#define SDRAM_TIM_3                     0x0040802F
+#define SDRAM_TIM_3_OPP100              0x008EA2BF
+#define SDRAM_CONFIG_INIT               0x80800EB1
+#define SDRAM_CONFIG_FINAL              0x80801AB1
+#define DDR_PHY_CTRL_1_INIT             0x849FFFF4
+#define DDR_PHY_CTRL_1_OPP100_INIT      0x849FF404
+#define DDR_PHY_CTRL_1_FINAL            0x849FFFF8
+#define DDR_PHY_CTRL_1_OPP100_FINAL     0x849FF408
+#define DDR_PHY_CTRL_2                  0x00000000
+#define READ_IDLE_CTRL                  0x000501FF
+#define READ_IDLE_CTRL_OPP100           0x000501FF
+#define PWR_MGMT_CTRL                   0x40000000
+#define PWR_MGMT_CTRL_OPP100            0x80000000
+#endif
+
+#else /* ES1.0 */
 /* TODO: ES1.0 OPP100 valuse are still not popullated
  * 600 MHz/200 MHz
  */
