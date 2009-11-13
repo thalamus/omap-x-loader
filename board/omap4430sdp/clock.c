@@ -583,8 +583,8 @@ static void enable_all_clocks(void)
 	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x3);
 
 	/* Enable SGX clocks */
-	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x3);
-	sr32(CM_SGX_SGX_CLKCTRL, 0, 32, 0x2);
+	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x2);
+	sr32(CM_SGX_SGX_CLKCTRL, 0, 32, 0x1000002);
 	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x0);
 
 	/* Enable hsi/unipro/usb clocks */
