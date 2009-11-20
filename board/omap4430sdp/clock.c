@@ -583,11 +583,13 @@ static void enable_all_clocks(void)
 	sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x3);
 
 	/* Enable SGX clocks */
-	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x2);
-	sr32(CM_SGX_SGX_CLKCTRL, 0, 32, 0x1000002);
+    sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x2);
+    sr32(CM_SGX_SGX_CLKCTRL, 0, 32, 0x1000002);
+    /* Check for SGX FCLK and ICLK */
+    while ( (*(volatile int*)0x4A009200) != 0x302 );
 	sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x0);
-
-	/* Enable hsi/unipro/usb clocks */
+	
+    /* Enable hsi/unipro/usb clocks */
 	sr32(CM_L3INIT_HSI_CLKCTRL, 0, 32, 0x1);
 	sr32(CM_L3INIT_UNIPRO1_CLKCTRL, 0, 32, 0x2);
 	sr32(CM_L3INIT_HSUSBHOST_CLKCTRL, 0, 32, 0x2);
