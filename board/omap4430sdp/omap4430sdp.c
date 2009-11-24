@@ -894,7 +894,7 @@ int dram_init(void)
 	MV(CP(UART3_RTS_SD) , ( M0))  /* uart3_rts_sd */ \
 	MV(CP(UART3_RX_IRRX) , ( IEN | M0))  /* uart3_rx */ \
 	MV(CP(UART3_TX_IRTX) , ( M0))  /* uart3_tx */ \
-	MV(CP(SDMMC5_CLK) , ( PTU | OFF_EN | OFF_OUT_PTD | M0))  /* sdmmc5_clk */ \
+	MV(CP(SDMMC5_CLK) , ( PTU | IEN | OFF_EN | OFF_OUT_PTD | M0))  /* sdmmc5_clk */ \
 	MV(CP(SDMMC5_CMD) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* sdmmc5_cmd */ \
 	MV(CP(SDMMC5_DAT0) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* sdmmc5_dat0 */ \
 	MV(CP(SDMMC5_DAT1) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* sdmmc5_dat1 */ \
