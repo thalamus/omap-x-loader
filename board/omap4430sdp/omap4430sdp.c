@@ -443,7 +443,7 @@ static void ddr_init(void)
 	__raw_writel(0x1c1c1c1c, 0x4A100640);
 	__raw_writel(0x1c1c1c1c, 0x4A100648);
 	__raw_writel(0x1c1c1c1c, 0x4A10064c);
-	__raw_writel(0x1c1c1c1c, 0x4A100640);
+	__raw_writel(0x1c1c1c1c, 0x4A100650);
 
 	/* LPDDR2IO set to NMOS PTV */
 	__raw_writel(0x00ffc000, 0x4A100704);
