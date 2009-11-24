@@ -208,6 +208,7 @@ static void configure_mpu_dpll(u32 clk_index)
 	sr32(CM_CLKSEL_DPLL_MPU, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_MPU, 0, 6, dpll_param_p->n);
 	sr32(CM_DIV_M2_DPLL_MPU, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_MPU, 8, 1, 0x1);
 
 	/* Lock the mpu dpll */
 	sr32(CM_CLKMODE_DPLL_MPU, 0, 3, PLL_LOCK | 0x10);
@@ -236,7 +237,9 @@ static void configure_iva_dpll(u32 clk_index)
 	sr32(CM_CLKSEL_DPLL_IVA, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_IVA, 0, 7, dpll_param_p->n);
 	sr32(CM_DIV_M4_DPLL_IVA, 0, 5, dpll_param_p->m4);
+	sr32(CM_DIV_M4_DPLL_IVA, 8, 1, 0x1);
 	sr32(CM_DIV_M5_DPLL_IVA, 0, 5, dpll_param_p->m5);
+	sr32(CM_DIV_M5_DPLL_IVA, 8, 1, 0x1);
 
 	/* Lock the iva dpll */
 	sr32(CM_CLKMODE_DPLL_IVA, 0, 3, PLL_LOCK);
@@ -262,11 +265,17 @@ static void configure_per_dpll(u32 clk_index)
 	sr32(CM_CLKSEL_DPLL_PER, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_PER, 0, 6, dpll_param_p->n);
 	sr32(CM_DIV_M2_DPLL_PER, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_PER, 8, 1, 0x1);
 	sr32(CM_DIV_M3_DPLL_PER, 0, 5, dpll_param_p->m3);
+	sr32(CM_DIV_M3_DPLL_PER, 8, 1, 0x1);
 	sr32(CM_DIV_M4_DPLL_PER, 0, 5, dpll_param_p->m4);
+	sr32(CM_DIV_M4_DPLL_PER, 8, 1, 0x1);
 	sr32(CM_DIV_M5_DPLL_PER, 0, 5, dpll_param_p->m5);
+	sr32(CM_DIV_M5_DPLL_PER, 8, 1, 0x1);
 	sr32(CM_DIV_M6_DPLL_PER, 0, 5, dpll_param_p->m6);
+	sr32(CM_DIV_M6_DPLL_PER, 8, 1, 0x1);
 	sr32(CM_DIV_M7_DPLL_PER, 0, 5, dpll_param_p->m7);
+	sr32(CM_DIV_M7_DPLL_PER, 8, 1, 0x1);
 
 	/* Lock the per dpll */
 	sr32(CM_CLKMODE_DPLL_PER, 0, 3, PLL_LOCK);
@@ -301,9 +310,11 @@ static void configure_abe_dpll(u32 clk_index)
 	/* Force DPLL CLKOUTHIF to stay enabled */
 	sr32(CM_DIV_M2_DPLL_ABE, 0, 32, 0x500);
 	sr32(CM_DIV_M2_DPLL_ABE, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_ABE, 8, 1, 0x1);
 	/* Force DPLL CLKOUTHIF to stay enabled */
 	sr32(CM_DIV_M3_DPLL_ABE, 0, 32, 0x100);
 	sr32(CM_DIV_M3_DPLL_ABE, 0, 5, dpll_param_p->m3);
+	sr32(CM_DIV_M3_DPLL_ABE, 8, 1, 0x1);
 
 	/* Lock the abe dpll */
 	sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_LOCK);
@@ -335,6 +346,8 @@ static void configure_usb_dpll(u32 clk_index)
 	/* Force DPLL CLKOUT to stay active */
 	sr32(CM_DIV_M2_DPLL_USB, 0, 32, 0x100);
 	sr32(CM_DIV_M2_DPLL_USB, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_USB, 8, 1, 0x1);
+	sr32(CM_CLKDCOLDO_DPLL_USB, 8, 1, 0x1);
 
 	/* Lock the usb dpll */
 	sr32(CM_CLKMODE_DPLL_USB, 0, 3, PLL_LOCK);
@@ -372,11 +385,17 @@ static void configure_core_dpll(clk_index)
 	sr32(CM_CLKSEL_DPLL_CORE, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_CORE, 0, 6, dpll_param_p->n);
 	sr32(CM_DIV_M2_DPLL_CORE, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M3_DPLL_CORE, 0, 5, dpll_param_p->m3);
+	sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M4_DPLL_CORE, 0, 5, dpll_param_p->m4);
+	sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M5_DPLL_CORE, 0, 5, dpll_param_p->m5);
+	sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M6_DPLL_CORE, 0, 5, dpll_param_p->m6);
+	sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M7_DPLL_CORE, 0, 5, dpll_param_p->m7);
+	sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
 
 	/* Lock the core dpll */
 	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_LOCK);
@@ -414,11 +433,17 @@ void configure_core_dpll_no_lock(void)
 	sr32(CM_CLKSEL_DPLL_CORE, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_CORE, 0, 6, dpll_param_p->n);
 	sr32(CM_DIV_M2_DPLL_CORE, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M3_DPLL_CORE, 0, 5, dpll_param_p->m3);
+	sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M4_DPLL_CORE, 0, 5, dpll_param_p->m4);
+	sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M5_DPLL_CORE, 0, 5, dpll_param_p->m5);
+	sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M6_DPLL_CORE, 0, 5, dpll_param_p->m6);
+	sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M7_DPLL_CORE, 0, 5, dpll_param_p->m7);
+	sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
 
 	return;
 }
