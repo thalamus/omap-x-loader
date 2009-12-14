@@ -123,14 +123,8 @@ void start_armboot (void)
 	do_load_serial_bin (CFG_LOADADDR, 115200);
 #else
 
-#if defined(CONFIG_MMC1)
-	/* TODO to fix this */
-	/* boot_device = __raw_readl(0x480029c0) & 0xff; */
-	boot_device = 6;
-#endif
-#if defined(CONFIG_MMC2)
-	boot_device = 5;
-#endif
+	/* Read boot device from saved scratch pad */
+	boot_device = __raw_readl(0x4A328000) & 0xff;
 	buf = (uchar *) CFG_LOADADDR;
 
 	switch(boot_device) {
@@ -157,17 +151,16 @@ void start_armboot (void)
 #endif
 		break;
 	case 0x05:
-		strcpy(boot_dev_name, "EMMC");
+		strcpy(boot_dev_name, "MMC/SD1");
 #if defined(CONFIG_MMC)
-		if (mmc_read_bootloader(1, 0) != 0)
+		if (mmc_read_bootloader(0, 1) != 0)
 			goto error;
 #endif
 		break;
 	case 0x06:
-		printf("Jump to Uboot\n");
-		strcpy(boot_dev_name, "MMC/SD1");
+		strcpy(boot_dev_name, "EMMC");
 #if defined(CONFIG_MMC)
-		if (mmc_read_bootloader(0, 1) != 0)
+		if (mmc_read_bootloader(1, 0) != 0)
 			goto error;
 #endif
 		break;

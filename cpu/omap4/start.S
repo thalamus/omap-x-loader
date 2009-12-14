@@ -95,6 +95,13 @@ _bss_end:
  */
 
 reset:
+	/* Use a temp scratch pad memory
+	 * to store the boot reason
+	 */
+	ldr     r4, scratchpad
+	ldr     r5, [r0, #0x8]          /* r5 <- value of boot device */
+	str     r5, [r4]                /* store r5 in scratchpad reg */
+
 	/*
 	 * set the cpu to SVC32 mode
 	 */
@@ -207,4 +214,4 @@ do_hang:
    	bl	hang			/* hang and never return */
 
 scratchpad:
-    .word 0x480029c0
+    .word 0x4A328000
