@@ -124,7 +124,7 @@ void start_armboot (void)
 #else
 
 	/* Read boot device from saved scratch pad */
-	boot_device = __raw_readl(0x4A328000) & 0xff;
+	boot_device = __raw_readl(0x4A326000) & 0xff;
 	buf = (uchar *) CFG_LOADADDR;
 
 	switch(boot_device) {

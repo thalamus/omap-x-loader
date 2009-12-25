@@ -33,6 +33,7 @@
 #if !defined(CONFIG_INTEGRATOR) && ! defined(CONFIG_ARCH_CINTEGRATOR)
 #include <asm/arch/cpu.h>
 #endif
+#define CONFIG_SKIP_RELOCATE_XLOADER
 .globl _start
 _start:
 	b	reset
@@ -128,6 +129,7 @@ next:
 	/* the mask ROM code should have PLL and others stable */
 	bl  cpu_init_crit
 
+#ifndef CONFIG_SKIP_RELOCATE_XLOADER
 relocate:				/* relocate U-Boot to RAM	    */
 	adr	r0, _start		/* r0 <- current position of code   */
 	ldr	r1, _TEXT_BASE		/* test if we run from flash or RAM */
@@ -144,6 +146,7 @@ copy_loop:                              /* copy 32 bytes at a time          */
 	stmia	r1!, {r3-r10}		/* copy to   target address [r1]    */
 	cmp	r0, r2			/* until source end addreee [r2]    */
 	ble	copy_loop
+#endif
 
 	/* Set up the stack						    */
 stack_setup:
@@ -214,4 +217,4 @@ do_hang:
    	bl	hang			/* hang and never return */
 
 scratchpad:
-    .word 0x4A328000
+    .word 0x4A326000
