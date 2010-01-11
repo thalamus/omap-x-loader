@@ -872,7 +872,7 @@ int dram_init(void)
 	MV(CP(ABE_DMIC_DIN3) , ( IEN | M0))  /* abe_dmic_din3 */ \
 	MV(CP(UART2_CTS) , ( PTU | IEN | M0))  /* uart2_cts */ \
 	MV(CP(UART2_RTS) , ( M0))  /* uart2_rts */ \
-	MV(CP(UART2_RX) , ( IEN | M0))  /* uart2_rx */ \
+	MV(CP(UART2_RX) , ( PTU | IEN | M0))  /* uart2_rx */ \
 	MV(CP(UART2_TX) , ( M0))  /* uart2_tx */ \
 	MV(CP(HDQ_SIO) , ( PTD | IEN | M3))  /* gpio_127 */ \
 	MV(CP(I2C1_SCL) , ( IEN | M0))  /* i2c1_scl */ \
@@ -1105,7 +1105,7 @@ int dram_init(void)
 	MV(CP(ABE_DMIC_DIN3),	(M0_SAFE)) /* abe_dmic_din3 */ \
 	MV(CP(UART2_CTS),	(PTU | IEN | M0)) /* uart2_cts */ \
 	MV(CP(UART2_RTS),	(M0)) /* uart2_rts */ \
-	MV(CP(UART2_RX),	(IEN | M0)) /* uart2_rx */ \
+	MV(CP(UART2_RX),	(PTU | IEN | M0)) /* uart2_rx */ \
 	MV(CP(UART2_TX),	(M0)) /* uart2_tx */ \
 	MV(CP(HDQ_SIO),	(M3_SAFE)) /* gpio_127 */ \
 	MV(CP(I2C1_SCL),	(PTU | IEN | M0)) /* i2c1_scl */ \
