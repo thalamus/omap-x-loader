@@ -236,7 +236,10 @@ unsigned char mmc_detect_card(mmc_card_data *mmc_card_cur,
 {
 	unsigned char err;
 	unsigned int argument = 0;
-	unsigned int ocr_value, ocr_recvd, ret_cmd41, hcs_val;
+	unsigned int ocr_value = 0;
+	unsigned int ocr_recvd = 0;
+	unsigned int ret_cmd41 = 0;
+	unsigned int hcs_val = 0;
 	unsigned int resp[4];
 	unsigned short retry_cnt = 2000;
 
