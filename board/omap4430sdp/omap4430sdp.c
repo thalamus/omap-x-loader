@@ -865,7 +865,7 @@ int dram_init(void)
 	MV(CP(MCSPI1_SOMI) , ( IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* mcspi1_somi */ \
 	MV(CP(MCSPI1_SIMO) , ( IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* mcspi1_simo */ \
 	MV(CP(MCSPI1_CS0) , ( PTD | IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* mcspi1_cs0 */ \
-	MV(CP(MCSPI1_CS1) , ( PTD | IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* mcspi1_cs1 */ \
+	MV(CP(MCSPI1_CS1) , ( PTD | IEN | OFF_EN | OFF_PD | OFF_IN | M3))  /* mcspi1_cs1 */ \
 	MV(CP(MCSPI1_CS2) , ( PTU | OFF_EN | OFF_OUT_PTU | M3))  /* gpio_139 */ \
 	MV(CP(MCSPI1_CS3) , ( PTU | IEN | M3))  /* gpio_140 */ \
 	MV(CP(UART3_CTS_RCTX) , ( PTU | IEN | M0))  /* uart3_tx */ \
