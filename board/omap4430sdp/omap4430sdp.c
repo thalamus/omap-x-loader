@@ -756,12 +756,12 @@ int dram_init(void)
 	MV(CP(GPMC_AD13) , ( PTD | OFF_EN | OFF_PD | OFF_OUT_PTD | M3))  /* gpio_37 */ \
 	MV(CP(GPMC_AD14) , ( PTD | OFF_EN | OFF_PD | OFF_OUT_PTD | M3))  /* gpio_38 */ \
 	MV(CP(GPMC_AD15) , ( PTD | OFF_EN | OFF_PD | OFF_OUT_PTD | M3))  /* gpio_39 */ \
-	MV(CP(GPMC_A16) , ( PTD | M3))  /* gpio_40 */ \
+	MV(CP(GPMC_A16) , ( M3))  /* gpio_40 */ \
 	MV(CP(GPMC_A17) , ( PTD | M3))  /* gpio_41 */ \
 	MV(CP(GPMC_A18) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row6 */ \
 	MV(CP(GPMC_A19) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row7 */ \
-	MV(CP(GPMC_A20) , ( M3))  /* gpio_44 */ \
-	MV(CP(GPMC_A21) , ( PTD | M3))  /* gpio_45 */ \
+	MV(CP(GPMC_A20) , ( IEN | M3))  /* gpio_44 */ \
+	MV(CP(GPMC_A21) , ( M3))  /* gpio_45 */ \
 	MV(CP(GPMC_A22) , ( OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col6 */ \
 	MV(CP(GPMC_A23) , ( OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col7 */ \
 	MV(CP(GPMC_A24) , ( PTD | M3))  /* gpio_48 */ \
@@ -775,7 +775,7 @@ int dram_init(void)
 	MV(CP(GPMC_NADV_ALE) , ( M3))  /* gpio_56 */ \
 	MV(CP(GPMC_NOE) , ( PTU | IEN | OFF_EN | OFF_OUT_PTD | M1))  /* sdmmc2_clk */ \
 	MV(CP(GPMC_NWE) , ( PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* sdmmc2_cmd */ \
-	MV(CP(GPMC_NBE0_CLE) , ( PTD | IEN | M3))  /* gpio_59 */ \
+	MV(CP(GPMC_NBE0_CLE) , ( M3))  /* gpio_59 */ \
 	MV(CP(GPMC_NBE1) , ( PTD | M3))  /* gpio_60 */ \
 	MV(CP(GPMC_WAIT0) , ( PTU | IEN | M3))  /* gpio_61 */ \
 	MV(CP(GPMC_WAIT1) , ( IEN | M3))  /* gpio_62 */ \
@@ -939,7 +939,7 @@ int dram_init(void)
 	MV(CP(DPM_EMU13) , ( IEN | M5))  /* dispc2_data6 */ \
 	MV(CP(DPM_EMU14) , ( IEN | M5))  /* dispc2_data5 */ \
 	MV(CP(DPM_EMU15) , ( IEN | M5))  /* dispc2_data4 */ \
-	MV(CP(DPM_EMU16) , ( IEN | M5))  /* dispc2_data3/dmtimer8_pwm_evt */ \
+	MV(CP(DPM_EMU16) , ( M3))  /* gpio_27 */ \
 	MV(CP(DPM_EMU17) , ( IEN | M5))  /* dispc2_data2 */ \
 	MV(CP(DPM_EMU18) , ( IEN | M5))  /* dispc2_data1 */ \
 	MV(CP(DPM_EMU19) , ( IEN | M5))  /* dispc2_data0 */ \
