@@ -464,14 +464,15 @@ slot2str(dir_slot *slotptr, char *l_name, int *idx)
 
 /* Calculate short name checksum */
 static __u8
-mkcksum(const char *str)
+mkcksum(const char *str, const char *ext)
 {
 	int i;
 	__u8 ret = 0;
 
-	for (i = 0; i < 11; i++) {
-		ret = (((ret&1)<<7)|((ret&0xfe)>>1)) + str[i];
-	}
+	for (i = 0; i < 8; i++)
+			ret = (((ret&1)<<7)|((ret&0xfe)>>1)) + str[i];
+	for (i = 0; i < 3; i++)
+			ret = (((ret&1)<<7)|((ret&0xfe)>>1)) + ext[i];
 
 	return ret;
 }
@@ -769,7 +770,7 @@ do_fat_read(const char *filename, void *buffer, unsigned long maxsize,
 	    }
 #ifdef CONFIG_SUPPORT_VFAT
 	    else if (dols == LS_ROOT
-		     && mkcksum (dentptr->name) == prevcksum) {
+		     && mkcksum(dentptr->name, dentptr->ext) == prevcksum) {
 		dentptr++;
 		continue;
 	    }
