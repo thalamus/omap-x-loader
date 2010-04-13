@@ -145,13 +145,11 @@ fat_register_device(block_dev_desc_t *dev_desc, int part_no)
 			return -1;
 		}
 #else
-		/* FIXME we need to determine the start block of the
-		 * partition where the DOS FS resides. This can be done
-		 * by using the get_partition_info routine. For this
-		 * purpose the libpart must be included.
-		 */
-		part_offset=63;
-		//part_offset=0;
+		part_offset =	buffer[DOS_PART_TBL_OFFSET + 8]  << 0	|
+				buffer[DOS_PART_TBL_OFFSET + 9]  << 8	|
+				buffer[DOS_PART_TBL_OFFSET + 10] << 16	|
+				buffer[DOS_PART_TBL_OFFSET + 11] << 24;
+
 		cur_part = 1;
 #endif
 	}
