@@ -917,7 +917,7 @@ int dram_init(void)
 	MV(CP(FREF_CLK2_OUT) , ( M0))  /* fref_clk2_out */ \
 	MV(CP(SYS_NIRQ1) , ( PTU | IEN | M0))  /* sys_nirq1 */ \
 	MV(CP(SYS_NIRQ2) , ( PTU | IEN | M0))  /* sys_nirq2 */ \
-	MV(CP(SYS_BOOT0) , ( PTD | IEN | M3))  /* gpio_184 */ \
+	MV(CP(SYS_BOOT0) , ( PTU | IEN | M3))  /* gpio_184 */ \
 	MV(CP(SYS_BOOT1) , ( M3))  /* gpio_185 */ \
 	MV(CP(SYS_BOOT2) , ( PTD | IEN | M3))  /* gpio_186 */ \
 	MV(CP(SYS_BOOT3) , ( M3))  /* gpio_187 */ \
