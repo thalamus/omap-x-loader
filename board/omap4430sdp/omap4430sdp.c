@@ -517,6 +517,22 @@ static void ddr_init(void)
 	//while(((*(volatile int*)CM_MEMIF_CLKSTCTRL) & 0x700) != 0x700);
 	*(volatile int*)(EMIF1_BASE + EMIF_PWR_MGMT_CTRL) = 0x80000000;
 	*(volatile int*)(EMIF2_BASE + EMIF_PWR_MGMT_CTRL) = 0x80000000;
+
+	/* SYSTEM BUG:
+	 * In n a specific situation, the OCP interface between the DMM and
+	 * EMIF may hang.
+	 * 1. A TILER port is used to perform 2D burst writes of
+	 * 	 width 1 and height 8
+	 * 2. ELLAn port is used to perform reads
+	 * 3. All accesses are routed to the same EMIF controller
+	 *
+	 * Work around to avoid this issue REG_SYS_THRESH_MAX value should
+	 * be kept higher than default 0x7. As per recommondation 0x0A will
+	 * be used for better performance with REG_LL_THRESH_MAX = 0x00
+	 */
+	*(volatile int*)(EMIF1_BASE + EMIF_L3_CONFIG) = 0x0A0000FF;
+	*(volatile int*)(EMIF2_BASE + EMIF_L3_CONFIG) = 0x0A0000FF;
+
 	/*
 	 * DMM : DMM_LISA_MAP_0(Section_0)
 	 * [31:24] SYS_ADDR 		0x80
