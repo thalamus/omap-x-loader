@@ -691,7 +691,8 @@ static void enable_all_clocks(void)
 	//wait_on_value(BIT17|BIT16, 0, CM_L3INIT_HSUSBTLL_CLKCTRL, LDELAY);
 	sr32(CM_L3INIT_FSUSB_CLKCTRL, 0, 32, 0x2);
 	//wait_on_value(BIT18|BIT17|BIT16, 0, CM_L3INIT_FSUSB_CLKCTRL, LDELAY);
-	sr32(CM_L3INIT_USBPHY_CLKCTRL, 0, 32, 0x1);
+	/* enable the 32K, 48M optional clocks and enable the module */
+	sr32(CM_L3INIT_USBPHY_CLKCTRL, 0, 32, 0x301);
 	//wait_on_value(BIT17|BIT16, 0, CM_L3INIT_USBPHY_CLKCTRL, LDELAY);
 	return;
 }
