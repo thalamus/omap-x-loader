@@ -612,7 +612,7 @@ void try_unlock_memory(void)
 }
 
 
-#ifdef CONFIG_MPU_600	
+#if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
 static scale_vcores(void)
 {
 	/* For VC bypass only VCOREx_CGF_FORCE  is necessary and
@@ -625,7 +625,7 @@ static scale_vcores(void)
 
 	/* set VCORE1 force VSEL */
 	/* PRM_VC_VAL_BYPASS) */
-	*(volatile int*)(0x4A307BA0) = 0x395512;
+	*(volatile int*)(0x4A307BA0) = 0x3B5512;
 	*(volatile int*)(0x4A307BA0) |= 0x1000000;
 	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
 
@@ -674,7 +674,7 @@ void s_init(void)
 	ddr_init();
 
 /* Set VCORE1 = 1.3 V, VCORE2 = VCORE3 = 1.21V */
-#ifdef CONFIG_MPU_600	
+#if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
 	scale_vcores();
 #endif	
 	prcm_init();

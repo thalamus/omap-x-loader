@@ -40,11 +40,6 @@
 #define CONFIG_OMAP4430          1    /* which is in a 3430 */
 #define CONFIG_4430SDP           1    /* working with SDP */
 
-/* Keep Default @ 33MHz at boot loader level
- * On Phoenix board vlotage needs to be bumped up
- * before scaling the MPU up
- */
-#define CONFIG_MPU_600		1
 #define CORE_190MHZ		1
 /* Enable the below macro if MMC boot support is required */
 #define CONFIG_MMC               1
