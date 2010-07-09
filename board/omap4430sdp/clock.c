@@ -113,6 +113,24 @@ struct dpll_param core_dpll_param[7] = {
 	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 	/* 27M values */
 	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 38.4M values - DDR@200MHz*/
+	{0x7d, 0x05, 0x02, 0x05, 0x08, 0x04, 0x06, 0x08},
+};
+
+/* CORE parameters for L3 at 190 MHz - For ES1 only*/
+struct dpll_param core_dpll_param_l3_190[7] = {
+	/* 12M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 13M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 16.8M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 19.2M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 26M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 27M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 	/* 38.4M values */
 #ifdef CONFIG_OMAP4_SDC
 #ifdef CORE_190MHZ 
@@ -124,6 +142,7 @@ struct dpll_param core_dpll_param[7] = {
 	{0x7d, 0x05, 0x01, 0x05, 0x08, 0x04, 0x06, 0x08},
 #endif
 };
+
 
 /* PER parameters */
 struct dpll_param per_dpll_param[7] = {
@@ -140,11 +159,11 @@ struct dpll_param per_dpll_param[7] = {
 	/* 27M values */
 	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 	/* 38.4M values */
-#ifdef CONFIG_OMAP4_SDC
+#if 0
+	/* SDC settings */
 	{0x0a, 0x00, 0x04, 0x03, 0x06, 0x05, 0x02, 0x03},
-#else
-	{0x14, 0x00, 0x08, 0x06, 0x0c, 0x09, 0x04, 0x05},
 #endif
+	{0x14, 0x00, 0x08, 0x06, 0x0c, 0x09, 0x04, 0x05},
 };
 
 /* ABE parameters */
@@ -378,26 +397,35 @@ static void configure_core_dpll(clk_index)
 	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_MN_POWER_BYPASS);
 	wait_on_value(BIT0, 0, CM_IDLEST_DPLL_CORE, LDELAY);
 
-	/* Program USB DPLL */
-	dpll_param_p = &core_dpll_param[clk_index];
-
+	/* Program Core DPLL */
+	if(omap_revision() == OMAP4430_ES1_0)
+		dpll_param_p = &core_dpll_param_l3_190[clk_index];
+	else
+		dpll_param_p = &core_dpll_param[clk_index];
+	
 	/* Disable autoidle */
 	sr32(CM_AUTOIDLE_DPLL_CORE, 0, 3, 0x0);
 
 	sr32(CM_CLKSEL_DPLL_CORE, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_CORE, 0, 6, dpll_param_p->n);
 	sr32(CM_DIV_M2_DPLL_CORE, 0, 5, dpll_param_p->m2);
-	sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M3_DPLL_CORE, 0, 5, dpll_param_p->m3);
-	sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M4_DPLL_CORE, 0, 5, dpll_param_p->m4);
-	sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M5_DPLL_CORE, 0, 5, dpll_param_p->m5);
-	sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M6_DPLL_CORE, 0, 5, dpll_param_p->m6);
-	sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M7_DPLL_CORE, 0, 5, dpll_param_p->m7);
-	sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
+
+	if(omap_revision() == OMAP4430_ES1_0)
+	{
+		/* Do this only on ES1.0 */
+		sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
+	}
+
 
 	/* Lock the core dpll */
 	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_LOCK);
@@ -426,8 +454,11 @@ void configure_core_dpll_no_lock(void)
 	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_MN_POWER_BYPASS);
 	wait_on_value(BIT0, 0, CM_IDLEST_DPLL_CORE, LDELAY);
 
-	/* Program USB DPLL */
-	dpll_param_p = &core_dpll_param[clk_index];
+	/* Program Core DPLL */
+	if(omap_revision() == OMAP4430_ES1_0)
+		dpll_param_p = &core_dpll_param_l3_190[clk_index];
+	else
+		dpll_param_p = &core_dpll_param[clk_index];
 
 	/* Disable autoidle */
 	sr32(CM_AUTOIDLE_DPLL_CORE, 0, 3, 0x0);
@@ -435,17 +466,22 @@ void configure_core_dpll_no_lock(void)
 	sr32(CM_CLKSEL_DPLL_CORE, 8, 11, dpll_param_p->m);
 	sr32(CM_CLKSEL_DPLL_CORE, 0, 6, dpll_param_p->n);
 	sr32(CM_DIV_M2_DPLL_CORE, 0, 5, dpll_param_p->m2);
-	sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M3_DPLL_CORE, 0, 5, dpll_param_p->m3);
-	sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M4_DPLL_CORE, 0, 5, dpll_param_p->m4);
-	sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M5_DPLL_CORE, 0, 5, dpll_param_p->m5);
-	sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M6_DPLL_CORE, 0, 5, dpll_param_p->m6);
-	sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
 	sr32(CM_DIV_M7_DPLL_CORE, 0, 5, dpll_param_p->m7);
-	sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
+
+	if(omap_revision() == OMAP4430_ES1_0)
+	{
+		/* Do this only on ES1.0 */
+		sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
+		sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
+	}
 
 	return;
 }
@@ -461,13 +497,15 @@ void lock_core_dpll(void)
 
 void lock_core_dpll_shadow(void)
 {
+	dpll_param *dpll_param_p;
 	/* Lock the core dpll using freq update method */
 	*(volatile int*)0x4A004120 = 10;	//(CM_CLKMODE_DPLL_CORE)
 
+	dpll_param_p = &core_dpll_param[6];
 	/* CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */
-	*(volatile int*)0x4A004260 = 0xF0D;
+	*(volatile int*)0x4A004260 = 0x70D | (dpll_param_p->m2 << 11);
 
 	/* Wait for Freq_Update to get cleared: CM_SHADOW_FREQ_CONFIG1 */
 	while( ( (*(volatile int*)0x4A004260) & 0x1) == 0x1 );

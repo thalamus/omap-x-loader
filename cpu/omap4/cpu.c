@@ -49,3 +49,27 @@ int cpu_init (void)
 	return 0;
 }
 
+unsigned int cortex_a9_rev(void)
+{
+
+	unsigned int i;
+
+	/* turn off I/D-cache */
+	asm ("mrc p15, 0, %0, c0, c0, 0" : "=r" (i));
+
+	return i;
+}
+
+unsigned int omap_revision(void)
+{
+	unsigned int rev = cortex_a9_rev();
+
+	switch(rev) {
+	case 0x410FC091:
+		return OMAP4430_ES1_0;
+	case 0x411FC092:
+		return OMAP4430_ES2_0;
+	default:
+		return OMAP4430_SILICON_ID_INVALID;
+	}
+}

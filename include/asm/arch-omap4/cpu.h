@@ -447,4 +447,17 @@
 	extern void lcd_panel_disable(void);
 #endif
 
+/* Silicon revisions */
+#define OMAP4430_SILICON_ID_INVALID	0
+#define OMAP4430_ES1_0	1
+#define OMAP4430_ES2_0	2
+
+#ifndef	__ASSEMBLY__
+/*Functions for silicon revision */
+unsigned int omap_revision(void);
+unsigned int cortex_a9_rev(void);
+
+void big_delay(unsigned int count);
+#endif
+
 #endif
