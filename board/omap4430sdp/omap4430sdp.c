@@ -549,7 +549,7 @@ static scale_vcores(void)
         if(rev == OMAP4430_ES1_0)
 		*(volatile int*)(0x4A307BA0) = 0x3B5512;
 	else
-		*(volatile int*)(0x4A307BA0) = 0x295512;
+		*(volatile int*)(0x4A307BA0) = 0x3A5512;
 	*(volatile int*)(0x4A307BA0) |= 0x1000000;
 	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
 
