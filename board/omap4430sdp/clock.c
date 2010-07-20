@@ -497,7 +497,10 @@ void lock_core_dpll_shadow(void)
 	/* Lock the core dpll using freq update method */
 	*(volatile int*)0x4A004120 = 10;	//(CM_CLKMODE_DPLL_CORE)
 
-	dpll_param_p = &core_dpll_param[6];
+	if(omap_revision() == OMAP4430_ES1_0)
+		dpll_param_p = &core_dpll_param_l3_190[6];
+	else
+		dpll_param_p = &core_dpll_param[6];
 	/* CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */
