@@ -73,3 +73,31 @@ unsigned int omap_revision(void)
 		return OMAP4430_SILICON_ID_INVALID;
 	}
 }
+
+unsigned int get_boot_mode(void)
+{
+	/* retrieve the boot mode stored in scratchpad */
+	return (*(volatile unsigned int *)(0x4A326004)) & 0xf;
+}
+
+unsigned int get_boot_device(void)
+{
+	/* retrieve the boot device stored in scratchpad */
+	return (*(volatile unsigned int *)(0x4A326000)) & 0xff;
+}
+unsigned int raw_boot(void)
+{
+	if (get_boot_mode() == 1)
+		return 1;
+	else
+		return 0;
+}
+
+unsigned int fat_boot(void)
+{
+	if (get_boot_mode() == 2)
+		return 1;
+	else
+		return 0;
+}
+

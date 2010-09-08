@@ -456,6 +456,9 @@
 /*Functions for silicon revision */
 unsigned int omap_revision(void);
 unsigned int cortex_a9_rev(void);
+unsigned int get_boot_device(void);
+unsigned int raw_boot(void);
+unsigned int fat_boot(void);
 
 void big_delay(unsigned int count);
 #endif

@@ -96,12 +96,16 @@ _bss_end:
  */
 
 reset:
-	/* Use a temp scratch pad memory
-	 * to store the boot reason
-	 */
+	/* Store the boot reason/device in scratchpad */
 	ldr     r4, scratchpad
 	ldr     r5, [r0, #0x8]          /* r5 <- value of boot device */
 	str     r5, [r4]                /* store r5 in scratchpad reg */
+
+	/* Store the boot mode (raw/FAT) in scratchpad */
+	ldr	r5, [r0, #0x4]		/* get the device descriptor ptr */
+	ldr	r5, [r5, #0x18]		/* get the pDeviceData ptr */
+	ldr	r5, [r5, #0x8]		/* get the boot mode */
+	str	r5, [r4, #0x4]		/* store boot mode in scratchpad+4 */
 
 	/*
 	 * set the cpu to SVC32 mode

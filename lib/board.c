@@ -70,7 +70,7 @@ char * strcpy(char * dest,const char *src)
 #endif
 
 #ifdef CFG_CMD_MMC
-int mmc_read_bootloader(int dev, int part)
+int mmc_read_bootloader(int dev)
 {
 	unsigned char ret = 0;
 	unsigned long offset = CFG_LOADADDR;
@@ -85,9 +85,9 @@ int mmc_read_bootloader(int dev, int part)
 	long size;
 	block_dev_desc_t *dev_desc = NULL;
 
-	if (part) {
+	if (fat_boot()) {
 		dev_desc = mmc_get_dev(dev);
-		fat_register_device(dev_desc, part);
+		fat_register_device(dev_desc, 1);
 		size = file_fat_read("u-boot.bin", (unsigned char *)offset, 0);
 		if (size == -1)
 			return -1;
@@ -111,7 +111,6 @@ void start_armboot (void)
  	int i;
 	uchar *buf;
 	char boot_dev_name[8];
-	u32 boot_device = 0;
  
    	for (init_fnc_ptr = init_sequence; *init_fnc_ptr; ++init_fnc_ptr) {
 		if ((*init_fnc_ptr)() != 0) {
@@ -122,12 +121,9 @@ void start_armboot (void)
 	strcpy(boot_dev_name, "UART");
 	do_load_serial_bin (CFG_LOADADDR, 115200);
 #else
-
-	/* Read boot device from saved scratch pad */
-	boot_device = __raw_readl(0x4A326000) & 0xff;
 	buf = (uchar *) CFG_LOADADDR;
 
-	switch(boot_device) {
+	switch (get_boot_device()) {
 	case 0x03:
 		strcpy(boot_dev_name, "ONENAND");
 #if defined(CFG_ONENAND)
@@ -153,14 +149,14 @@ void start_armboot (void)
 	case 0x05:
 		strcpy(boot_dev_name, "MMC/SD1");
 #if defined(CONFIG_MMC)
-		if (mmc_read_bootloader(0, 1) != 0)
+		if (mmc_read_bootloader(0) != 0)
 			goto error;
 #endif
 		break;
 	case 0x06:
 		strcpy(boot_dev_name, "EMMC");
 #if defined(CONFIG_MMC)
-		if (mmc_read_bootloader(1, 0) != 0)
+		if (mmc_read_bootloader(1) != 0)
 			goto error;
 #endif
 		break;
