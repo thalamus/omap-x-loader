@@ -34,18 +34,6 @@
 
 #define CONFIG_OMAP4_SDC 1
 
-/* Used to index into DPLL parameter tables */
-struct dpll_param {
-	unsigned int m;
-	unsigned int n;
-	unsigned int m2;
-	unsigned int m3;
-	unsigned int m4;
-	unsigned int m5;
-	unsigned int m6;
-	unsigned int m7;
-};
-
 /* Tables having M,N,M2 et al values for different sys_clk speeds
  * This table is generated only for OPP100
  * The tables are organized as follows:
@@ -139,29 +127,6 @@ struct dpll_param core_dpll_param_l3_190[7] = {
 #endif
 };
 
-
-/* PER parameters */
-struct dpll_param per_dpll_param[7] = {
-	/* 12M values */
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
-	/* 13M values */
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
-	/* 16.8M values */
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
-	/* 19.2M values */
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
-	/* 26M values */
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
-	/* 27M values */
-	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
-	/* 38.4M values */
-#if 0
-	/* SDC settings */
-	{0x0a, 0x00, 0x04, 0x03, 0x06, 0x05, 0x02, 0x03},
-#endif
-	{0x14, 0x00, 0x08, 0x06, 0x0c, 0x09, 0x04, 0x05},
-};
-
 /* ABE parameters */
 struct dpll_param abe_dpll_param[7] = {
 	/* 12M values */
@@ -205,6 +170,8 @@ struct dpll_param usb_dpll_param[7] = {
 	{0x32, 0x1, 0x2, 0x0, 0x0, 0x0, 0x0, 0x0},
 #endif
 };
+/* PER dpll params defined in board file */
+extern const struct dpll_param per_dpll_param[7];
 
 typedef struct dpll_param dpll_param;
 
@@ -376,61 +343,6 @@ static void configure_usb_dpll(u32 clk_index)
 	return;
 }
 
-static void configure_core_dpll(clk_index)
-{
-	dpll_param *dpll_param_p;
-
-	/* Get the sysclk speed from cm_sys_clksel
-	 * Set it to 38.4 MHz, in case ROM code is bypassed
-	 */
-	if (!clk_index)
-		return;
-
-	/* CORE_CLK=CORE_X2_CLK/2, L3_CLK=CORE_CLK/2, L4_CLK=L3_CLK/2 */
-	sr32(CM_CLKSEL_CORE, 0, 32, 0x110);
-
-	/* Unlock the CORE dpll */
-	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_MN_POWER_BYPASS);
-	wait_on_value(BIT0, 0, CM_IDLEST_DPLL_CORE, LDELAY);
-
-	/* Program Core DPLL */
-	if(omap_revision() == OMAP4430_ES1_0)
-		dpll_param_p = &core_dpll_param_l3_190[clk_index];
-	else
-		dpll_param_p = &core_dpll_param[clk_index];
-	
-	/* Disable autoidle */
-	sr32(CM_AUTOIDLE_DPLL_CORE, 0, 3, 0x0);
-
-	sr32(CM_CLKSEL_DPLL_CORE, 8, 11, dpll_param_p->m);
-	sr32(CM_CLKSEL_DPLL_CORE, 0, 6, dpll_param_p->n);
-	sr32(CM_DIV_M2_DPLL_CORE, 0, 5, dpll_param_p->m2);
-	sr32(CM_DIV_M3_DPLL_CORE, 0, 5, dpll_param_p->m3);
-	sr32(CM_DIV_M4_DPLL_CORE, 0, 5, dpll_param_p->m4);
-	sr32(CM_DIV_M5_DPLL_CORE, 0, 5, dpll_param_p->m5);
-	sr32(CM_DIV_M6_DPLL_CORE, 0, 5, dpll_param_p->m6);
-	sr32(CM_DIV_M7_DPLL_CORE, 0, 5, dpll_param_p->m7);
-
-	if(omap_revision() == OMAP4430_ES1_0)
-	{
-		/* Do this only on ES1.0 */
-		sr32(CM_DIV_M2_DPLL_CORE, 8, 1, 0x1);
-		sr32(CM_DIV_M3_DPLL_CORE, 8, 1, 0x1);
-		sr32(CM_DIV_M4_DPLL_CORE, 8, 1, 0x1);
-		sr32(CM_DIV_M5_DPLL_CORE, 8, 1, 0x1);
-		sr32(CM_DIV_M6_DPLL_CORE, 8, 1, 0x1);
-		sr32(CM_DIV_M7_DPLL_CORE, 8, 1, 0x1);
-	}
-
-
-	/* Lock the core dpll */
-	sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_LOCK);
-	wait_on_value(BIT0, 1, CM_IDLEST_DPLL_CORE, LDELAY);
-
-	return;
-}
-
-
 void configure_core_dpll_no_lock(void)
 {
 	dpll_param *dpll_param_p;
@@ -518,8 +430,6 @@ void lock_core_dpll_shadow(void)
 
 static void enable_all_clocks(void)
 {
-	volatile int regvalue = 0;
-
 	/* Enable Ducati clocks */
 	sr32(CM_DUCATI_DUCATI_CLKCTRL, 0, 32, 0x1);
 	sr32(CM_DUCATI_CLKSTCTRL, 0, 32, 0x2);
@@ -753,8 +663,6 @@ void prcm_init(void)
 	clk_index = readl(CM_SYS_CLKSEL);
 	if (!clk_index)
 		return; /* Sys clk uninitialized */
-	/* Core DPLL is locked using FREQ update method */
-	/* configure_core_dpll(clk_index - 1); */
 
 	/* Configure all DPLL's at 100% OPP */
 	configure_mpu_dpll(clk_index - 1);

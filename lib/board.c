@@ -70,6 +70,7 @@ char * strcpy(char * dest,const char *src)
 #endif
 
 #ifdef CFG_CMD_MMC
+extern block_dev_desc_t *mmc_get_dev(int dev);
 int mmc_read_bootloader(int dev)
 {
 	unsigned char ret = 0;
@@ -108,7 +109,6 @@ extern int do_load_serial_bin(ulong offset, int baudrate);
 void start_armboot (void)
 {
   	init_fnc_t **init_fnc_ptr;
- 	int i;
 	uchar *buf;
 	char boot_dev_name[8];
  

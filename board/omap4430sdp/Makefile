@@ -27,8 +27,7 @@ include $(TOPDIR)/config.mk
 
 LIB	= lib$(BOARD).a
 
-OBJS	:= omap4430sdp.o clock.o syslib.o
-SOBJS	:= platform.o
+OBJS	:= omap4430sdp.o
 
 $(LIB):	$(OBJS) $(SOBJS)
 	$(AR) crv $@ $^

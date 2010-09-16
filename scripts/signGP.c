@@ -227,6 +227,7 @@ main(int argc, char *argv[])
 	FILE	*ifile, *ofile;
 	unsigned long	loadaddr, len;
 	struct stat	sinfo;
+	size_t ret;
 
 
 	// Default to x-load.bin and 0x40200800.
@@ -262,17 +263,13 @@ main(int argc, char *argv[])
 		exit(0);
 	}
 
-	// Pad 1 sector of zeroes.
-	//ch = 0x00;
-	//for (i=0; i<0x200; i++)
-	//	fwrite(&ch, 1, 1, ofile);
-
 	fwrite(&config_header, 1, 512, ofile);
 	fwrite(&len, 1, 4, ofile);
 	fwrite(&loadaddr, 1, 4, ofile);
 	for (i=0; i<len; i++) {
-		fread(&ch, 1, 1, ifile);
-		fwrite(&ch, 1, 1, ofile);
+		ret = fread(&ch, 1, 1, ifile);
+		if (ret)
+			fwrite(&ch, 1, 1, ofile);
 	}
 
 	fclose(ifile);

@@ -109,7 +109,7 @@ DBGFLAGS= -g # -DDEBUG
 OPTFLAGS= -Os #-fomit-frame-pointer
 ifndef LDSCRIPT
 #LDSCRIPT := $(TOPDIR)/board/$(BOARDDIR)/x-load.lds.debug
-LDSCRIPT := $(TOPDIR)/board/$(BOARDDIR)/x-load.lds
+LDSCRIPT := $(TOPDIR)/cpu/$(CPU)/x-load.lds
 endif
 OBJCFLAGS += --gap-fill=0xff
 

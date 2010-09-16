@@ -570,14 +570,12 @@ unsigned long mmc_bread(int dev_num, ulong blknr, ulong blkcnt, ulong *dst)
 	ret = (unsigned long)omap_mmc_read_sect(blknr,
 				(blkcnt * MMCSD_SECTOR_SIZE),
 			&cur_controller_data, &cur_card_data,
-					(unsigned long *)dst);
+					(unsigned int *)dst);
 	return ret;
 }
 
 int mmc_init(int slot)
 {
-	unsigned char ret = 0;
-
 	configure_controller(&cur_controller_data, slot);
 	configure_mmc(&cur_card_data, &cur_controller_data);
 
