@@ -172,4 +172,8 @@ export	TEXT_BASE PLATFORM_CPPFLAGS PLATFORM_RELFLAGS CPPFLAGS CFLAGS AFLAGS
 %.o:	%.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+.depend:	Makefile $(SOBJS:.o=.S) $(OBJS:.o=.c) $(AOBJS:.o=.S)  $(START:.o=.S) $(COBJS:.o=.c)
+		$(CC) -M $(CPPFLAGS) $(SOBJS:.o=.S) $(OBJS:.o=.c) | \
+			sed -e "s/\:/\\\:/g"|sed -e "s/\\\: /\: /g"> $@
+
 #########################################################################

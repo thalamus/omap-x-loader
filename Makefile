@@ -42,7 +42,8 @@ VENDOR=
 
 #########################################################################
 
-TOPDIR	:= $(shell if [ "$$PWD" != "" ]; then echo $$PWD; else pwd; fi)
+TOPDIR_	:= $(shell if [ "$$PWD" != "" ]; then echo $$PWD; else pwd; fi)
+TOPDIR	:= $(shell echo "$(TOPDIR_)"| sed -e "s/\:/\\\:/g")
 export	TOPDIR
 
 ifeq (include/config.mk,$(wildcard include/config.mk))

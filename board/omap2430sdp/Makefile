@@ -38,10 +38,6 @@ distclean:	clean
 	rm -f $(LIB) core *.bak .depend
 
 #########################################################################
-
-.depend:	Makefile $(SOBJS:.o=.S) $(OBJS:.o=.c)
-		$(CC) -M $(CPPFLAGS) $(SOBJS:.o=.S) $(OBJS:.o=.c) > $@
-
 -include .depend
 
 #########################################################################
