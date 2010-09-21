@@ -170,7 +170,7 @@ omap4430sdp_config :    unconfig
 
 omap4430panda_MPU_600MHz_config \
 omap4430panda_config :    unconfig
-	@./mkconfig $(@:_config=) arm omap4 omap4430sdp
+	@./mkconfig $(@:_config=) arm omap4 omap4430panda
 	echo "/* Generarated file. Do not edit */" >./include/config.h
 	echo "#include <configs/omap4430panda.h>" >>./include/config.h
 	@[ -n "$(findstring _MPU_600MHz,$@)" ] || \
