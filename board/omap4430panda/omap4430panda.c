@@ -107,15 +107,16 @@ void ddr_init(void)
 	else if (rev == OMAP4430_ES2_0)
 		ddr_regs = &ddr_regs_200_mhz;
 
-	/* same memory part on both EMIFs */
-	do_ddr_init(ddr_regs, ddr_regs);
-
 	/*
 	 * DMM Configuration:
 	 * 512 MB memory
 	 * 128 byte interleaved
 	 */
 	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
+
+	/* same memory part on both EMIFs */
+	do_ddr_init(ddr_regs, ddr_regs);
+
 
 }
 
