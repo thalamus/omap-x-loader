@@ -197,9 +197,9 @@ void ddr_init(void)
 	MV(CP(GPMC_NBE0_CLE) , (M3))  /* gpio_59 */ \
 	MV(CP(GPMC_NBE1) , (PTD | M3))  /* gpio_60 */ \
 	MV(CP(GPMC_WAIT0) , (PTU | IEN | M3))  /* gpio_61 */ \
-	MV(CP(GPMC_WAIT1) , (IEN | M3))  /* gpio_62 */ \
+	MV(CP(GPMC_WAIT1) , (PTD | OFF_EN | OFF_PD | OFF_OUT_PTD | M3))  /* gpio_62 */ \
 	MV(CP(C2C_DATA11) , (PTD | M3))  /* gpio_100 */ \
-	MV(CP(C2C_DATA12) , ( M1))  /* dsi1_te0 */ \
+	MV(CP(C2C_DATA12) , (PTU | IEN | M3))  /* gpio_101 */ \
 	MV(CP(C2C_DATA13) , (PTD | M3))  /* gpio_102 */ \
 	MV(CP(C2C_DATA14) , ( M1))  /* dsi2_te0 */ \
 	MV(CP(C2C_DATA15) , (PTD | M3))  /* gpio_104 */ \
@@ -317,12 +317,12 @@ void ddr_init(void)
 	MV(CP(USBB2_ULPITLL_DAT7) , (IEN | M5))  /* dispc2_data11 */ \
 	MV(CP(USBB2_HSIC_DATA) , (PTD | OFF_EN | OFF_OUT_PTU | M3))  /* gpio_169 */ \
 	MV(CP(USBB2_HSIC_STROBE) , (PTD | OFF_EN | OFF_OUT_PTU | M3))  /* gpio_170 */ \
-	MV(CP(UNIPRO_TX0) , (OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col0 */ \
+	MV(CP(UNIPRO_TX0) , (PTD | IEN | M3))  /* gpio_171 */ \
 	MV(CP(UNIPRO_TY0) , (OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col1 */ \
 	MV(CP(UNIPRO_TX1) , (OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col2 */ \
 	MV(CP(UNIPRO_TY1) , (OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_col3 */ \
-+	MV(CP(UNIPRO_TX2) , (OFF_EN | OFF_PD | OFF_IN | M3))  /* gpio_0 */ \
-+	MV(CP(UNIPRO_TY2) , (OFF_EN | OFF_PD | OFF_IN | M3))  /* gpio_1 */ \
+	MV(CP(UNIPRO_TX2) , (PTU | IEN | M3))  /* gpio_0 */ \
+	MV(CP(UNIPRO_TY2) , (PTU | IEN | M3))  /* gpio_1 */ \
 	MV(CP(UNIPRO_RX0) , (PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row0 */ \
 	MV(CP(UNIPRO_RY0) , (PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row1 */ \
 	MV(CP(UNIPRO_RX1) , (PTU | IEN | OFF_EN | OFF_PD | OFF_IN | M1))  /* kpd_row2 */ \
@@ -333,7 +333,7 @@ void ddr_init(void)
 	MV(CP(USBA0_OTG_DP) , (IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* usba0_otg_dp */ \
 	MV(CP(USBA0_OTG_DM) , (IEN | OFF_EN | OFF_PD | OFF_IN | M0))  /* usba0_otg_dm */ \
 	MV(CP(FREF_CLK1_OUT) , (M0))  /* fref_clk1_out */ \
-	MV(CP(FREF_CLK2_OUT) , (M0))  /* fref_clk2_out */ \
+	MV(CP(FREF_CLK2_OUT) , (PTU | IEN | M3))  /* gpio_182 */ \
 	MV(CP(SYS_NIRQ1) , (PTU | IEN | M0))  /* sys_nirq1 */ \
 	MV(CP(SYS_NIRQ2) , (PTU | IEN | M0))  /* sys_nirq2 */ \
 	MV(CP(SYS_BOOT0) , (PTU | IEN | M3))  /* gpio_184 */ \
@@ -373,7 +373,7 @@ void ddr_init(void)
 	MV1(WK(PAD0_FREF_SLICER_IN) , (M0))  /* fref_slicer_in */ \
 	MV1(WK(PAD1_FREF_CLK_IOREQ) , (M0))  /* fref_clk_ioreq */ \
 	MV1(WK(PAD0_FREF_CLK0_OUT) , (M2))  /* sys_drm_msecure */ \
-	MV1(WK(PAD1_FREF_CLK3_REQ) , (PTU | IEN | M0))  /* # */ \
+	MV1(WK(PAD1_FREF_CLK3_REQ) , (M3))  /* gpio_wk30 */ \
 	MV1(WK(PAD0_FREF_CLK3_OUT) , (M0))  /* fref_clk3_out */ \
 	MV1(WK(PAD1_FREF_CLK4_REQ) , (PTU | IEN | M0))  /* # */ \
 	MV1(WK(PAD0_FREF_CLK4_OUT) , (M0))  /* # */ \
