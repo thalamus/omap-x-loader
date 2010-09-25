@@ -234,7 +234,7 @@ static void configure_iva_dpll(u32 clk_index)
 
 static void configure_per_dpll(u32 clk_index)
 {
-	dpll_param *dpll_param_p;
+	const dpll_param *dpll_param_p;
 
 	/* Unlock the PER dpll */
 	sr32(CM_CLKMODE_DPLL_PER, 0, 3, PLL_MN_POWER_BYPASS);
