@@ -96,6 +96,19 @@ const struct ddr_regs ddr_regs_200_mhz = {
 	.mr2		= 0x1
 };
 
+const struct ddr_regs ddr_regs_200_mhz_2cs = {
+	.tim1		= 0x08648309,
+	.tim2		= 0x101b06ca,
+	.tim3		= 0x0048a19f,
+	.phy_ctrl_1	= 0x849FF405,
+	.ref_ctrl	= 0x0000030c,
+	.config_init	= 0x80000eb9,
+	.config_final	= 0x80000eb9,
+	.zq_config	= 0xD00b3215,
+	.mr1		= 0x23,
+	.mr2		= 0x1
+};
+
 /* ddr_init() - initializes ddr */
 void ddr_init(void)
 {
@@ -105,20 +118,23 @@ void ddr_init(void)
 	if(rev == OMAP4430_ES1_0)
 		ddr_regs = &ddr_regs_380_mhz;
 	else if (rev == OMAP4430_ES2_0)
-		ddr_regs = &ddr_regs_200_mhz;
+		ddr_regs = &ddr_regs_200_mhz_2cs;
 
 	/*
 	 * DMM Configuration:
-	 * 512 MB memory
+	 * ES1.0 - 512 MB
+	 * ES2.0 - 1GB
 	 * 128 byte interleaved
 	 */
-	*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
+	if (rev == OMAP4430_ES1_0)
+		*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
+	else if (rev == OMAP4430_ES2_0)
+		*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80640300;
 
 	/* same memory part on both EMIFs */
 	do_ddr_init(ddr_regs, ddr_regs);
-
-
 }
+
 
 #define		OMAP44XX_WKUP_CTRL_BASE		0x4A31E000 
 #if 1
