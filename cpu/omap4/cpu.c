@@ -66,6 +66,9 @@ unsigned int omap_revision(void)
 {
 	unsigned int rev = cortex_a9_rev();
 
+	if (__raw_readl(0x4a002204) == 0x3b95c02f)
+		return OMAP4430_ES2_1;
+
 	switch(rev) {
 	case 0x410FC091:
 		return OMAP4430_ES1_0;
@@ -119,8 +122,11 @@ static void scale_vcores(void)
 	/* PRM_VC_VAL_BYPASS) */
         if(rev == OMAP4430_ES1_0)
 		*(volatile int*)(0x4A307BA0) = 0x3B5512;
-	else
+	else if (rev == OMAP4430_ES2_0)
 		*(volatile int*)(0x4A307BA0) = 0x3A5512;
+	else if (rev == OMAP4430_ES2_1)
+		*(volatile int*)(0x4A307BA0) = 0x3A5512;
+
 	*(volatile int*)(0x4A307BA0) |= 0x1000000;
 	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
 
@@ -144,8 +150,11 @@ static void scale_vcores(void)
 	/* PRM_VC_VAL_BYPASS */
         if(rev == OMAP4430_ES1_0)
 		*(volatile int*)(0x4A307BA0) = 0x316112;
-	else
+	else if (rev == OMAP4430_ES2_0)
 		*(volatile int*)(0x4A307BA0) = 0x296112;
+	else if (rev == OMAP4430_ES2_1)
+		*(volatile int*)(0x4A307BA0) = 0x2A6112;
+
 	*(volatile int*)(0x4A307BA0) |= 0x1000000;
 	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
 

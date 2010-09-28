@@ -232,6 +232,8 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 		__raw_writel(0x1c1c1c1c, 0x4A100648);
 		__raw_writel(0x1c1c1c1c, 0x4A10064c);
 		__raw_writel(0x1c1c1c1c, 0x4A100650);
+		/* LPDDR2IO set to NMOS PTV */
+		__raw_writel(0x00ffc000, 0x4A100704);
 	} else if (rev == OMAP4430_ES2_0) {
 		__raw_writel(0x9e9e9e9e, 0x4A100638);
 		__raw_writel(0x9e9e9e9e, 0x4A10063c);
@@ -239,10 +241,9 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 		__raw_writel(0x9e9e9e9e, 0x4A100648);
 		__raw_writel(0x9e9e9e9e, 0x4A10064c);
 		__raw_writel(0x9e9e9e9e, 0x4A100650);
+		/* LPDDR2IO set to NMOS PTV */
+		__raw_writel(0x00ffc000, 0x4A100704);
 	}
-	/* LPDDR2IO set to NMOS PTV */
-	__raw_writel(0x00ffc000, 0x4A100704);
-
 	/* EMIF2 only at 0x90000000 */
 	//*(volatile int*)(DMM_BASE + DMM_LISA_MAP_1) = 0x90400200;
 
@@ -305,8 +306,10 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	 * be kept higher than default 0x7. As per recommondation 0x0A will
 	 * be used for better performance with REG_LL_THRESH_MAX = 0x00
 	 */
-	*(volatile int*)(EMIF1_BASE + EMIF_L3_CONFIG) = 0x0A0000FF;
-	*(volatile int*)(EMIF2_BASE + EMIF_L3_CONFIG) = 0x0A0000FF;
+	if (rev == OMAP4430_ES1_0) {
+		*(volatile int*)(EMIF1_BASE + EMIF_L3_CONFIG) = 0x0A0000FF;
+		*(volatile int*)(EMIF2_BASE + EMIF_L3_CONFIG) = 0x0A0000FF;
+	}
 
 	/*
 	 * DMM : DMM_LISA_MAP_0(Section_0)
@@ -317,6 +320,7 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	 * [9:8] SDRC_MAP 		0x3
 	 * [7:0] SDRC_ADDR		0X0
 	 */
+
 	reset_phy(EMIF1_BASE);
 	reset_phy(EMIF2_BASE);
 

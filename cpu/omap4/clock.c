@@ -123,6 +123,24 @@ struct dpll_param core_dpll_param[7] = {
 	{0x7d, 0x05, 0x02, 0x05, 0x08, 0x04, 0x06, 0x05},
 };
 
+/* CORE parameters */
+struct dpll_param core_dpll_param_ddr400[7] = {
+	/* 12M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 13M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 16.8M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 19.2M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 26M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 27M values */
+	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
+	/* 38.4M values - DDR@400MHz*/
+	{0x7d, 0x05, 0x01, 0x05, 0x08, 0x04, 0x06, 0x05},
+};
+
 /* CORE parameters for L3 at 190 MHz - For ES1 only*/
 struct dpll_param core_dpll_param_l3_190[7] = {
 	/* 12M values */
@@ -380,8 +398,10 @@ void configure_core_dpll_no_lock(void)
 	/* Program Core DPLL */
 	if(omap_revision() == OMAP4430_ES1_0)
 		dpll_param_p = &core_dpll_param_l3_190[clk_index];
-	else
+	else if (omap_revision() == OMAP4430_ES2_0)
 		dpll_param_p = &core_dpll_param[clk_index];
+	else if (omap_revision() == OMAP4430_ES2_1)
+		dpll_param_p = &core_dpll_param_ddr400[clk_index];
 
 	/* Disable autoidle */
 	sr32(CM_AUTOIDLE_DPLL_CORE, 0, 3, 0x0);
@@ -421,13 +441,19 @@ void lock_core_dpll(void)
 void lock_core_dpll_shadow(void)
 {
 	dpll_param *dpll_param_p;
+	u32 clk_index;
 	/* Lock the core dpll using freq update method */
 	*(volatile int*)0x4A004120 = 10;	//(CM_CLKMODE_DPLL_CORE)
 
+	clk_index = 6;
+
 	if(omap_revision() == OMAP4430_ES1_0)
-		dpll_param_p = &core_dpll_param_l3_190[6];
-	else
-		dpll_param_p = &core_dpll_param[6];
+		dpll_param_p = &core_dpll_param_l3_190[clk_index];
+	else if (omap_revision() == OMAP4430_ES2_0)
+		dpll_param_p = &core_dpll_param[clk_index];
+	else if (omap_revision() == OMAP4430_ES2_1)
+		dpll_param_p = &core_dpll_param_ddr400[clk_index];
+
 	/* CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */

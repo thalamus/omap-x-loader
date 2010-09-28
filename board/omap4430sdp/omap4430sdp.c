@@ -76,6 +76,22 @@ const struct ddr_regs ddr_regs_400_mhz = {
 	.mr2		= 0x4
 };
 
+/*
+ * 400 MHz + 2 CS = 1 GB
+ */
+const struct ddr_regs ddr_regs_400_mhz_2cs = {
+	/* tRRD changed from 10ns to 12.5ns because of the tFAW requirement*/
+	.tim1		= 0x10eb0662,
+	.tim2		= 0x20370dd2,
+	.tim3		= 0x00b1c33f,
+	.phy_ctrl_1	= 0x849FF408,
+	.ref_ctrl	= 0x00000618,
+	.config_init	= 0x80000eb9,
+	.config_final	= 0x80001ab9,
+	.zq_config	= 0xD00b3215,
+	.mr1		= 0x83,
+	.mr2		= 0x4
+};
 const struct ddr_regs ddr_regs_200_mhz = {
 	.tim1		= 0x08648309,
 	.tim2		= 0x101b06ca,
@@ -112,7 +128,8 @@ void ddr_init(void)
 		ddr_regs = &ddr_regs_380_mhz;
 	else if (rev == OMAP4430_ES2_0)
 		ddr_regs = &ddr_regs_200_mhz_2cs;
-
+	else if (rev == OMAP4430_ES2_1)
+		ddr_regs = &ddr_regs_400_mhz_2cs;
 	/*
 	 * DMM Configuration:
 	 * ES1.0 - 512 MB
@@ -121,7 +138,7 @@ void ddr_init(void)
 	 */
 	if (rev == OMAP4430_ES1_0)
 		*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
-	else if (rev == OMAP4430_ES2_0)
+	else
 		*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80640300;
 
 	/* same memory part on both EMIFs */
