@@ -293,9 +293,6 @@ static void configure_abe_dpll(u32 clk_index)
 	/* Select sys_clk as ref clk for ABE dpll */
 	sr32(CM_ABE_PLL_REF_CLKSEL, 0, 32, 0x0);
 
-	/* Enable slimbus and pad clocks */
-	sr32(CM_CLKSEL_ABE, 0, 32, 0x500);
-
 	/* Unlock the ABE dpll */
 	sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_MN_POWER_BYPASS);
 	wait_on_value(BIT0, 0, CM_IDLEST_DPLL_ABE, LDELAY);
