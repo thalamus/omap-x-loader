@@ -692,6 +692,9 @@ static void enable_all_clocks(void)
 		//wait_on_value(BIT17|BIT16, 0, CM_L3INIT_USBPHY_CLKCTRL, LDELAY);
 	}
 
+	/* Select DPLL PER CLOCK as source for SGX FCLK */
+	sr32(CM_SGX_SGX_CLKCTRL, 24, 1, 0x1);
+
 	/* Enable clocks for USB fast boot to work */
 	sr32(CM_L3INIT_USBPHY_CLKCTRL, 0, 32, 0x301);
 	sr32(CM_L3INIT_HSUSBOTG_CLKCTRL, 0, 32, 0x1);
