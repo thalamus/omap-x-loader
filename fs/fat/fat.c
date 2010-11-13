@@ -384,7 +384,7 @@ get_contents(fsdata *mydata, dir_entry *dentptr, __u8 *buffer,
 			newclust = get_fatent(mydata, endclust);
 			if((newclust -1)!=endclust)
 				goto getit;
-			if (newclust <= 0x0001 || newclust >= 0xfff0) {
+			if (newclust <= 0x0001 || newclust >= 0xfffff0) {
 				FAT_DPRINT("curclust: 0x%x\n", newclust);
 				FAT_DPRINT("Invalid FAT entry\n");
 				return gotsize;
@@ -419,7 +419,7 @@ getit:
 		filesize -= actsize;
 		buffer += actsize;
 		curclust = get_fatent(mydata, endclust);
-		if (curclust <= 0x0001 || curclust >= 0xfff0) {
+		if (curclust <= 0x0001 || curclust >= 0xfffff0) {
 			FAT_DPRINT("curclust: 0x%x\n", curclust);
 			FAT_ERROR("Invalid FAT entry\n");
 			return gotsize;
@@ -581,7 +581,7 @@ static dir_entry *get_dentfromdir (fsdata * mydata, int startsect,
 	    return retdent;
 	}
 	curclust = get_fatent (mydata, curclust);
-	if (curclust <= 0x0001 || curclust >= 0xfff0) {
+	if (curclust <= 0x0001 || curclust >= 0xfffff0) {
 	    FAT_DPRINT ("curclust: 0x%x\n", curclust);
 	    FAT_ERROR ("Invalid FAT entry\n");
 	    return NULL;
@@ -680,7 +680,7 @@ do_fat_read(const char *filename, void *buffer, unsigned long maxsize,
     dir_entry *dentptr;
     __u16 prevcksum = 0xffff;
     char *subname = "";
-    int rootdir_size, cursect;
+    int rootdir_size, cursect, curclus;
     int idx, isdir = 0;
     int files = 0, dirs = 0;
     long ret = 0;
@@ -698,6 +698,7 @@ do_fat_read(const char *filename, void *buffer, unsigned long maxsize,
     mydata->fat_sect = bs.reserved;
     cursect = mydata->rootdir_sect
 	    = mydata->fat_sect + mydata->fatlength * bs.fats;
+    curclus = bs.root_cluster;   /* For FAT32 only */
     mydata->clust_size = bs.cluster_size;
     if (mydata->fatsize == 32) {
 	rootdir_size = mydata->clust_size;
@@ -819,7 +820,16 @@ do_fat_read(const char *filename, void *buffer, unsigned long maxsize,
 
 	    goto rootdir_done;  /* We got a match */
 	}
-	cursect++;
+
+	if (mydata->fatsize != 32)
+	   cursect++;
+	else {
+	   /* FAT32 does not guarantee contiguous root directory */
+	   curclus = get_fatent (mydata, curclus);
+	   cursect = (curclus * mydata->clust_size) + mydata->data_begin;
+
+	   FAT_DPRINT ("root clus %d sector %d\n", curclus, cursect);
+	}
     }
   rootdir_done:
 
