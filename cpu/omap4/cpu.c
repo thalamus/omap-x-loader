@@ -181,9 +181,9 @@ void s_init(void)
 	scale_vcores();
 #endif	
 
+	prcm_init();
 	ddr_init();
 
-	prcm_init();
 
 }
 

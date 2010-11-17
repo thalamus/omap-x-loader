@@ -442,6 +442,18 @@ void lock_core_dpll_shadow(void)
 {
 	dpll_param *dpll_param_p;
 	u32 clk_index;
+	u32 temp;
+	temp = __raw_readl(CM_MEMIF_CLKSTCTRL);
+	temp &= (~3);
+	temp |= 2;
+	__raw_writel(temp, CM_MEMIF_CLKSTCTRL);
+
+	while (__raw_readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
+		;
+
+	while (__raw_readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
+		;
+
 	/* Lock the core dpll using freq update method */
 	*(volatile int*)0x4A004120 = 10;	//(CM_CLKMODE_DPLL_CORE)
 
@@ -466,6 +478,13 @@ void lock_core_dpll_shadow(void)
 	wait_on_value(BIT0, 1, CM_IDLEST_DPLL_CORE, LDELAY);
 	//lock_core_dpll();
 
+	while (__raw_readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
+		;
+
+	while (__raw_readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
+		;
+
+	__raw_writel(temp|3, CM_MEMIF_CLKSTCTRL);
 	return;
 }
 
