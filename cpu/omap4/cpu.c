@@ -138,52 +138,56 @@ static void scale_vcores(void)
 	 * VCOREx_CFG_VOLTAGE  changes can be discarded
 	 */
 	/* PRM_VC_CFG_I2C_MODE */
-	*(volatile int*)(0x4A307BA8) = 0x0;
+	__raw_writel(0x0, 0x4A307BA8);
 	/* PRM_VC_CFG_I2C_CLK */
-	*(volatile int*)(0x4A307BAC) = 0x6026;
+	__raw_writel(0x6026, 0x4A307BAC);
 
 	/* set VCORE1 force VSEL */
 	/* PRM_VC_VAL_BYPASS) */
         if(rev == OMAP4430_ES1_0)
-		*(volatile int*)(0x4A307BA0) = 0x3B5512;
+		__raw_writel(0x3B5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
-		*(volatile int*)(0x4A307BA0) = 0x3A5512;
+		__raw_writel(0x3A5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_1)
-		*(volatile int*)(0x4A307BA0) = 0x3A5512;
+		__raw_writel(0x3A5512, 0x4A307BA0);
 
-	*(volatile int*)(0x4A307BA0) |= 0x1000000;
-	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
+	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
+	while(__raw_readl(0x4A307BA0) & 0x1000000)
+		;
 
 	/* PRM_IRQSTATUS_MPU */
-	*(volatile int*)(0x4A306010) = *(volatile int*)(0x4A306010);
+	__raw_writel(__raw_readl(0x4A306010), 0x4A306010);
 
 
 	/* FIXME: set VCORE2 force VSEL, Check the reset value */
 	/* PRM_VC_VAL_BYPASS) */
         if(rev == OMAP4430_ES1_0)
-		*(volatile int*)(0x4A307BA0) = 0x315B12;
+		__raw_writel(0x315B12, 0x4A307BA0);
 	else
-		*(volatile int*)(0x4A307BA0) = 0x295B12;
-	*(volatile int*)(0x4A307BA0) |= 0x1000000;
-	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
+		__raw_writel(0x295B12, 0x4A307BA0);
+	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
+	while(__raw_readl(0x4A307BA0) & 0x1000000)
+		;
 
 	/* PRM_IRQSTATUS_MPU */
-	*(volatile int*)(0x4A306010) = *(volatile int*)(0x4A306010);
+	__raw_writel(__raw_readl(0x4A306010), 0x4A306010);
 
 	/*/set VCORE3 force VSEL */
 	/* PRM_VC_VAL_BYPASS */
         if(rev == OMAP4430_ES1_0)
-		*(volatile int*)(0x4A307BA0) = 0x316112;
+		__raw_writel(0x316112, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
-		*(volatile int*)(0x4A307BA0) = 0x296112;
+		__raw_writel(0x296112, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_1)
-		*(volatile int*)(0x4A307BA0) = 0x2A6112;
+		__raw_writel(0x2A6112, 0x4A307BA0);
 
-	*(volatile int*)(0x4A307BA0) |= 0x1000000;
-	while((*(volatile int*)(0x4A307BA0)) & 0x1000000);
+	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
+
+	while(__raw_readl(0x4A307BA0) & 0x1000000)
+		;
 
 	/* PRM_IRQSTATUS_MPU */
-	*(volatile int*)(0x4A306010) = *(volatile int*)(0x4A306010);
+	__raw_writel(__raw_readl(0x4A306010), 0x4A306010);
 
 }
 #endif

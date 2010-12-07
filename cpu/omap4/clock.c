@@ -448,14 +448,15 @@ void lock_core_dpll_shadow(void)
 	temp |= 2;
 	__raw_writel(temp, CM_MEMIF_CLKSTCTRL);
 
-	while (__raw_readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
+	while(__raw_readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
 		;
 
-	while (__raw_readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
+	while(__raw_readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
 		;
 
 	/* Lock the core dpll using freq update method */
-	*(volatile int*)0x4A004120 = 10;	//(CM_CLKMODE_DPLL_CORE)
+	/*(CM_CLKMODE_DPLL_CORE) */
+	__raw_writel(0x0A, 0x4A004120);
 
 	clk_index = 6;
 
@@ -469,19 +470,20 @@ void lock_core_dpll_shadow(void)
 	/* CM_SHADOW_FREQ_CONFIG1: DLL_OVERRIDE = 1(hack), DLL_RESET = 1,
 	 * DPLL_CORE_M2_DIV =1, DPLL_CORE_DPLL_EN = 0x7, FREQ_UPDATE = 1
 	 */
-	*(volatile int*)0x4A004260 = 0x70D | (dpll_param_p->m2 << 11);
+	__raw_writel(0x70D | (dpll_param_p->m2 << 11), 0x4A004260);
 
 	/* Wait for Freq_Update to get cleared: CM_SHADOW_FREQ_CONFIG1 */
-	while( ( (*(volatile int*)0x4A004260) & 0x1) == 0x1 );
+	while((__raw_readl(0x4A004260) & 0x1) == 0x1)
+		;
 
 	/* Wait for DPLL to Lock : CM_IDLEST_DPLL_CORE */
 	wait_on_value(BIT0, 1, CM_IDLEST_DPLL_CORE, LDELAY);
 	//lock_core_dpll();
 
-	while (__raw_readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
+	while(__raw_readl(CM_MEMIF_EMIF_1_CLKCTRL) & 0x30000)
 		;
 
-	while (__raw_readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
+	while(__raw_readl(CM_MEMIF_EMIF_2_CLKCTRL) & 0x30000)
 		;
 
 	__raw_writel(temp|3, CM_MEMIF_CLKSTCTRL);
@@ -520,11 +522,6 @@ static void enable_all_clocks(void)
 		//wait_on_value(BIT18|BIT17|BIT16, 0, DSP_DSP_CLKCTRL, LDELAY);
 
 		/* TODO: Some hack needed by MM: Clean this */
-		#if 0 /* Doesn't work on some Zebu */
-		*(volatile int*)0x4a306910 = 0x00000003;
-		*(volatile int*)0x550809a0 = 0x00000001;
-		*(volatile int*)0x55080a20 = 0x00000007;
-		#endif
 
 		/* ABE clocks */
 		sr32(CM1_ABE_CLKSTCTRL, 0, 32, 0x3);
@@ -675,14 +672,15 @@ static void enable_all_clocks(void)
 
 		/* Enable DSS clocks */
 		/* PM_DSS_PWRSTCTRL ON State and LogicState = 1 (Retention) */
-		*(volatile int*)0x4A307100 = 0x7; //DSS_PRM
+		__raw_writel(0x7, 0x4A307100);
 		sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x2);
 		sr32(CM_DSS_DSS_CLKCTRL, 0, 32, 0xf02);
 		//wait_on_value(BIT18|BIT17|BIT16, 0, CM_DSS_DSS_CLKCTRL, LDELAY);
 		sr32(CM_DSS_DEISS_CLKCTRL, 0, 32, 0x2);
 		//wait_on_value(BIT18|BIT17|BIT16, 0, CM_DSS_DEISS_CLKCTRL, LDELAY);
 		/* Check for DSS Clocks */
-		while (((*(volatile int*)0x4A009100) & 0xF00) != 0xE00)
+		while((__raw_readl(0x4A009100) & 0xF00) != 0xE00)
+			;
 		/* Set HW_AUTO transition mode */
 		sr32(CM_DSS_CLKSTCTRL, 0, 32, 0x3);
 
@@ -691,7 +689,8 @@ static void enable_all_clocks(void)
 		sr32(CM_SGX_SGX_CLKCTRL, 0, 32, 0x2);
 		//wait_on_value(BIT18|BIT17|BIT16, 0, CM_SGX_SGX_CLKCTRL, LDELAY);
 		/* Check for SGX FCLK and ICLK */
-		while ( (*(volatile int*)0x4A009200) != 0x302 );
+		while(__raw_readl(0x4A009200) != 0x302)
+			;
 		//sr32(CM_SGX_CLKSTCTRL, 0, 32, 0x0);
 		/* Enable hsi/unipro/usb clocks */
 		sr32(CM_L3INIT_HSI_CLKCTRL, 0, 32, 0x1);

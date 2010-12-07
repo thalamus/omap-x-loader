@@ -137,9 +137,9 @@ void ddr_init(void)
 	 * 128 byte interleaved
 	 */
 	if (rev == OMAP4430_ES1_0)
-		*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80540300;
+		__raw_writel(0x80540300, DMM_BASE + DMM_LISA_MAP_0);
 	else
-		*(volatile int*)(DMM_BASE + DMM_LISA_MAP_0) = 0x80640300;
+		__raw_writel(0x80640300, DMM_BASE + DMM_LISA_MAP_0);
 
 	/* same memory part on both EMIFs */
 	do_ddr_init(ddr_regs, ddr_regs);
