@@ -93,7 +93,7 @@ unsigned int omap_revision(void)
 {
 	unsigned int rev = cortex_a9_rev();
 
-	if (__raw_readl(0x4a002204) == 0x3b95c02f)
+	if (__raw_readl(CONTROL_ID_CODE) == 0x3b95c02f)
 		return OMAP4430_ES2_1;
 
 	switch(rev) {

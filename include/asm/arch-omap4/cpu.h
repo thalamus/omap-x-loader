@@ -30,6 +30,7 @@
 
 /* Register offsets of common modules */
 /* Control */
+#define CONTROL_ID_CODE			(OMAP44XX_CTRL_GEN_BASE + 0x204)
 #define CONTROL_STATUS			(OMAP44XX_CTRL_GEN_BASE + 0x2C4)
 #define OMAP44XX_MCR			(OMAP44XX_CTRL_GEN_BASE + 0x8C)
 #define CONTROL_SCALABLE_OMAP_STATUS	(OMAP44XX_CTRL_GEN_BASE + 0x44C)
