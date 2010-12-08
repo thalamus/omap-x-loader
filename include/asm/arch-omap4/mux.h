@@ -84,7 +84,7 @@
 
 /*
  * To get the actual address the offset has to added
- * with OMAP44XX_CTRL_BASE to get the actual address
+ * with OMAP44XX_CTRL_PADCONF_CORE_BASE to get the actual address
  */
 
 /* OMAP4 SPECIFIC PADCONF REGISTERS */
@@ -388,7 +388,7 @@
 #define CONTROL_WKUP_CONTROL_SPARE_R_C0		0x061C
 
 #define		MV(OFFSET, VALUE)\
-			__raw_writew((VALUE), OMAP44XX_CTRL_BASE + (OFFSET));
+			__raw_writew((VALUE), OMAP44XX_CTRL_PADCONF_CORE_BASE + (OFFSET));
 #define		MV1(OFFSET, VALUE)\
 			__raw_writew((VALUE), OMAP44XX_WKUP_CTRL_BASE + (OFFSET));
 
