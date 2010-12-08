@@ -33,6 +33,9 @@
 #include <common.h>
 #include <asm/io.h>
 #include <asm/arch/mem.h>
+#include <asm/arch/bits.h>
+#include <asm/arch/cpu.h>
+#include <asm/arch/sys_proto.h>
 
 /* See also ARM Ref. Man. */
 #define C1_MMU		(1<<0)		/* mmu off/on */
@@ -101,6 +104,15 @@ unsigned int omap_revision(void)
 	default:
 		return OMAP4430_SILICON_ID_INVALID;
 	}
+}
+
+u32 get_device_type(void)
+{
+	/*
+	 * Retrieve the device type: GP/EMU/HS/TST stored in
+	 * CONTROL_STATUS
+	 */
+	return (__raw_readl(CONTROL_STATUS) & DEVICE_MASK) >> 8;
 }
 
 unsigned int get_boot_mode(void)
