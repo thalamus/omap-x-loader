@@ -258,7 +258,6 @@ get_fatent(fsdata *mydata, __u32 entry)
 		__u8 *bufptr = (__u8 *)mydata->fatbuf;
 		__u32 fatlength = mydata->fatlength;
 		__u32 startblock = bufnum * FATBUFBLOCKS;
-		unsigned long i;
 
 		fatlength *= SECTOR_SIZE;	/* We want it in bytes now */
 		startblock += mydata->fat_sect;	/* Offset from start of disk */
@@ -431,35 +430,6 @@ getit:
 
 
 #ifdef CONFIG_SUPPORT_VFAT
-/*
- * Extract the file name information from 'slotptr' into 'l_name',
- * starting at l_name[*idx].
- * Return 1 if terminator (zero byte) is found, 0 otherwise.
- */
-static int
-slot2str(dir_slot *slotptr, char *l_name, int *idx)
-{
-	int j;
-
-	for (j = 0; j <= 8; j += 2) {
-		l_name[*idx] = slotptr->name0_4[j];
-		if (l_name[*idx] == 0x00) return 1;
-		(*idx)++;
-	}
-	for (j = 0; j <= 10; j += 2) {
-		l_name[*idx] = slotptr->name5_10[j];
-		if (l_name[*idx] == 0x00) return 1;
-		(*idx)++;
-	}
-	for (j = 0; j <= 2; j += 2) {
-		l_name[*idx] = slotptr->name11_12[j];
-		if (l_name[*idx] == 0x00) return 1;
-		(*idx)++;
-	}
-
-	return 0;
-}
-
 /* Calculate short name checksum */
 static __u8
 mkcksum(const char *str, const char *ext)
