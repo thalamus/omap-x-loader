@@ -255,7 +255,7 @@ get_fatent(fsdata *mydata, __u32 entry)
 	/* Read a new block of FAT entries into the cache. */
 	if (bufnum != mydata->fatbufnum) {
 		int getsize = FATBUFSIZE/FS_BLOCK_SIZE;
-		__u8 *bufptr = mydata->fatbuf;
+		__u8 *bufptr = (__u8 *)mydata->fatbuf;
 		__u32 fatlength = mydata->fatlength;
 		__u32 startblock = bufnum * FATBUFBLOCKS;
 		unsigned long i;
@@ -662,8 +662,8 @@ read_bootsectandvi(boot_sector *bs, volume_info *volinfo, int *fatsize)
 __u8 do_fat_read_block[MAX_CLUSTSIZE];  /* Block buffer */
 #endif
 
-__u8 *fnamecopy = 0x80500000;
-__u8 *do_fat_read_block = 0x80500880;
+__u8 *fnamecopy = (__u8 *)0x80500000;
+__u8 *do_fat_read_block = (__u8 *)0x80500880;
 
 boot_sector bs;
 volume_info volinfo;
