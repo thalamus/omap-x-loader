@@ -28,7 +28,7 @@ LIB	= lib$(CPU).a
 
 START	= start.o
 OBJS	= cpu.o mmc.o sys_info.o clock.o sdram.o syslib.o
-SOBJS	= platform.o
+SOBJS	= platform.o smc.o
 
 all:	.depend $(START) $(LIB)
 

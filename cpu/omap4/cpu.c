@@ -36,6 +36,7 @@
 #include <asm/arch/bits.h>
 #include <asm/arch/cpu.h>
 #include <asm/arch/sys_proto.h>
+#include <asm/arch/smc.h>
 
 /* See also ARM Ref. Man. */
 #define C1_MMU		(1<<0)		/* mmu off/on */
@@ -49,31 +50,16 @@
 #define C1_HIGH_VECTORS	(1<<13) /* location of vectors: low/high addresses */
 #define RESERVED_1	(0xf << 3)	/* must be 111b for R/W */
 
-typedef unsigned int (** const PUBLIC_SEC_ENTRY_Pub2SecDispatcher_pt) \
-	(unsigned int appl_id, unsigned int proc_ID, unsigned int flag, ...);
-
-#define PUBLIC_SEC_ENTRY_Pub2SecDispatcher \
-	(*(PUBLIC_SEC_ENTRY_Pub2SecDispatcher_pt) 0x00028400)
-
-#define PL310_POR	0x23
+#define PL310_POR	5
 
 int cpu_init (void)
 {
 	if (omap_revision() > OMAP4430_ES1_0){
-		__asm__ __volatile__("push {r0-r12}");
-		__asm__ __volatile__("PL310_base_address:\
-					.word 0x48242000");
-		__asm__ __volatile__("PL310aux_svc:\
-					.word 0x109");
-		__asm__ __volatile__("ldr    r12, PL310aux_svc");
-		__asm__ __volatile__("ldr    r1, PL310_base_address");
-		__asm__ __volatile__("ldr    r0, [r1, #0x104]");
-		// Enable L2 data prefetch
-		__asm__ __volatile__("orr    r0, r0, #0x10000000");
-		__asm__ __volatile__("smc #1");
-		//Set POR = 5
-		PUBLIC_SEC_ENTRY_Pub2SecDispatcher( PL310_POR, 0, 0x7, 1, 5);
-		__asm__ __volatile__("pop {r0-r12}");
+		/* Enable L2 data prefetch */
+		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
+			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
+		/* Set PL310 Prefetch Offset Register */
+		omap_smc_ppa(PPA_SERVICE_PL310_POR, 0, 0x7, 1, PL310_POR);
 	}
 	return 0;
 }

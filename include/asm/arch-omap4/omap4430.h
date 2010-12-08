@@ -67,6 +67,9 @@
 #define OMAP44XX_CTRL_GEN_BASE		(OMAP44XX_L4_IO_BASE+0x2000)
 #define OMAP44XX_CTRL_PADCONF_CORE_BASE	0x4a100000
 
+/* PL310 */
+#define OMAP44XX_PL310_BASE		0x48242000
+
 /* TAP information  dont know for 3430*/
 #define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
 
