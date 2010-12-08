@@ -159,13 +159,6 @@ void ddr_init(void)
 #define M5_SAFE M7
 #define M6_SAFE M7
 #endif
-#define		MV(OFFSET, VALUE)\
-			__raw_writew((VALUE), OMAP44XX_CTRL_BASE + (OFFSET));
-#define		MV1(OFFSET, VALUE)\
-			__raw_writew((VALUE), OMAP44XX_WKUP_CTRL_BASE + (OFFSET));
-
-#define		CP(x)	(CONTROL_PADCONF_##x)
-#define		WK(x)	(CONTROL_WKUP_##x)
 /*
  * IEN  - Input Enable
  * IDIS - Input Disable
