@@ -378,7 +378,7 @@ static void configure_usb_dpll(u32 clk_index)
 
 void configure_core_dpll_no_lock(void)
 {
-	dpll_param *dpll_param_p;
+	dpll_param *dpll_param_p = 0;
 	u32 clk_index;
 
 	/* Get the sysclk speed from cm_sys_clksel
@@ -440,7 +440,7 @@ void lock_core_dpll(void)
 
 void lock_core_dpll_shadow(void)
 {
-	dpll_param *dpll_param_p;
+	dpll_param *dpll_param_p = 0;
 	u32 clk_index;
 	u32 temp;
 	temp = __raw_readl(CM_MEMIF_CLKSTCTRL);
