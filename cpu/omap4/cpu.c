@@ -54,7 +54,7 @@
 
 int cpu_init (void)
 {
-	if (omap_revision() > OMAP4430_ES1_0){
+	if (omap_revision() > OMAP4430_ES1_0 && get_device_type() != GP_DEVICE){
 		/* Enable L2 data prefetch */
 		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
