@@ -59,7 +59,7 @@
 int board_init(void)
 {
 	unsigned int rev = omap_revision();
-	if (rev == OMAP4430_ES2_0) {
+	if (rev != OMAP4430_ES1_0) {
 		if (__raw_readl(0x4805D138) & (1<<22)) {
 			/* enable software ioreq */
 			sr32(0x4A30a31C, 8, 1, 0x1);
@@ -86,72 +86,6 @@ int board_init(void)
 	}
 	return 0;
 }
-
-const struct ddr_regs ddr_regs_380_mhz = {
-	.tim1		= 0x10cb061a,
-	.tim2		= 0x20350d52,
-	.tim3		= 0x00b1431f,
-	.phy_ctrl_1	= 0x849FF408,
-	.ref_ctrl	= 0x000005ca,
-	.config_init	= 0x80000eb1,
-	.config_final	= 0x80001ab1,
-	.zq_config	= 0x500b3215,
-	.mr1		= 0x83,
-	.mr2		= 0x4
-};
-
-const struct ddr_regs ddr_regs_200_mhz = {
-	.tim1		= 0x08648309,
-	.tim2		= 0x101b06ca,
-	.tim3		= 0x0048a19f,
-	.phy_ctrl_1	= 0x849FF405,
-	.ref_ctrl	= 0x0000030c,
-	.config_init	= 0x80000eb1,
-	.config_final	= 0x80000eb1,
-	.zq_config	= 0x500b3215,
-	.mr1		= 0x23,
-	.mr2		= 0x1
-};
-
-const struct ddr_regs ddr_regs_200_mhz_2cs = {
-	.tim1		= 0x08648309,
-	.tim2		= 0x101b06ca,
-	.tim3		= 0x0048a19f,
-	.phy_ctrl_1	= 0x849FF405,
-	.ref_ctrl	= 0x0000030c,
-	.config_init	= 0x80000eb9,
-	.config_final	= 0x80000eb9,
-	.zq_config	= 0xD00b3215,
-	.mr1		= 0x23,
-	.mr2		= 0x1
-};
-
-/* ddr_init() - initializes ddr */
-void ddr_init(void)
-{
-	u32 rev;
-	const struct ddr_regs *ddr_regs = 0;
-	rev = omap_revision();
-	if(rev == OMAP4430_ES1_0)
-		ddr_regs = &ddr_regs_380_mhz;
-	else if (rev == OMAP4430_ES2_0)
-		ddr_regs = &ddr_regs_200_mhz_2cs;
-
-	/*
-	 * DMM Configuration:
-	 * ES1.0 - 512 MB
-	 * ES2.0 - 1GB
-	 * 128 byte interleaved
-	 */
-	if (rev == OMAP4430_ES1_0)
-		__raw_writel(0x80540300, DMM_BASE + DMM_LISA_MAP_0);
-	else if (rev == OMAP4430_ES2_0)
-		__raw_writel(0x80640300, DMM_BASE + DMM_LISA_MAP_0);
-
-	/* same memory part on both EMIFs */
-	do_ddr_init(ddr_regs, ddr_regs);
-}
-
 
 #define		OMAP44XX_WKUP_CTRL_BASE		0x4A31E000 
 #if 1

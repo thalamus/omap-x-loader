@@ -27,7 +27,7 @@ include $(TOPDIR)/config.mk
 LIB	= lib$(CPU).a
 
 START	= start.o
-OBJS	= cpu.o mmc.o sys_info.o clock.o sdram.o syslib.o
+OBJS	= cpu.o mmc.o sys_info.o clock.o sdram.o syslib.o sdram_elpida.o
 SOBJS	= platform.o smc.o
 
 all:	.depend $(START) $(LIB)
