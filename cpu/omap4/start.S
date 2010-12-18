@@ -99,7 +99,11 @@ reset:
 	/* Store the boot reason/device in scratchpad */
 	ldr     r4, scratchpad
 	ldr     r5, [r0, #0x8]          /* r5 <- value of boot device */
+	bic	r5, r5, #0xFFFFFF00	@ clear bits other than first byte*/
 	str     r5, [r4]                /* store r5 in scratchpad reg */
+
+	cmp	r5, #0x40
+	bgt	skip_type_check
 
 	/* Store the boot mode (raw/FAT) in scratchpad */
 	ldr	r5, [r0, #0x4]		/* get the device descriptor ptr */
@@ -107,6 +111,7 @@ reset:
 	ldr	r5, [r5, #0x8]		/* get the boot mode */
 	str	r5, [r4, #0x4]		/* store boot mode in scratchpad+4 */
 
+skip_type_check:
 	/*
 	 * set the cpu to SVC32 mode
 	 */
