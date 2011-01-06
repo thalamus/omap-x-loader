@@ -77,19 +77,24 @@ unsigned int cortex_a9_rev(void)
 
 unsigned int omap_revision(void)
 {
+	unsigned int chip_rev = 0;
 	unsigned int rev = cortex_a9_rev();
 
-	if (__raw_readl(CONTROL_ID_CODE) == 0x3b95c02f)
-		return OMAP4430_ES2_1;
-
+	/* ES1.0 and ES2.0 revision support */
 	switch(rev) {
-	case 0x410FC091:
-		return OMAP4430_ES1_0;
-	case 0x411FC092:
-		return OMAP4430_ES2_0;
-	default:
-		return OMAP4430_SILICON_ID_INVALID;
+		case 0x410FC091:
+			return OMAP4430_ES1_0;
+		case 0x411FC092:
+			chip_rev = (__raw_readl(CONTROL_ID_CODE)  >> 28);
+			if(chip_rev == 0x3)
+				return OMAP4430_ES2_1;
+			else if(chip_rev >= 0x4)
+				return OMAP4430_ES2_2;
+			else
+				return OMAP4430_ES2_0;
 	}
+
+	return OMAP4430_SILICON_ID_INVALID;
 }
 
 u32 get_device_type(void)
@@ -146,7 +151,7 @@ static void scale_vcores(void)
 		__raw_writel(0x3B5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x3A5512, 0x4A307BA0);
-	else if (rev == OMAP4430_ES2_1)
+	else if (rev >= OMAP4430_ES2_1)
 		__raw_writel(0x3A5512, 0x4A307BA0);
 
 	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
@@ -176,7 +181,7 @@ static void scale_vcores(void)
 		__raw_writel(0x316112, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x296112, 0x4A307BA0);
-	else if (rev == OMAP4430_ES2_1)
+	else if (rev >= OMAP4430_ES2_1)
 		__raw_writel(0x2A6112, 0x4A307BA0);
 
 	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);

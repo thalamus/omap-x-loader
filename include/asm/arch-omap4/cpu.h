@@ -509,6 +509,7 @@
 #define OMAP4430_ES1_0	1
 #define OMAP4430_ES2_0	2
 #define OMAP4430_ES2_1	3
+#define OMAP4430_ES2_2	4
 
 #ifndef	__ASSEMBLY__
 

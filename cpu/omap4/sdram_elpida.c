@@ -108,7 +108,7 @@ void __ddr_init(void)
 		ddr_regs = &ddr_regs_elpida2G_380_mhz;
 	else if (rev == OMAP4430_ES2_0)
 		ddr_regs = &ddr_regs_elpida2G_200_mhz_2cs;
-	else if (rev == OMAP4430_ES2_1)
+	else if (rev >= OMAP4430_ES2_1)
 		ddr_regs = &ddr_regs_elpida2G_400_mhz_2cs;
 	/*
 	 * DMM Configuration:
