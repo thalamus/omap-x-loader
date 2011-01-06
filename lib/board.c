@@ -94,7 +94,7 @@ int mmc_read_bootloader(int dev)
 			return -1;
 	} else {
 		/* FIXME: OMAP4 specific */
-		 mmc_read(dev, 0x400, (unsigned char *)CFG_LOADADDR,
+		 mmc_read(dev, 0x200, (unsigned char *)CFG_LOADADDR,
 							0x00060000);
 	}
 #endif
