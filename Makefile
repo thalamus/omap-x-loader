@@ -182,6 +182,13 @@ omap4430panda_config :    unconfig
 		  echo "MPU at 600MHz revision.." ; \
 		}
 
+omap44XXtablet_config :    unconfig
+	@./mkconfig $(@:_config=) arm omap4 omap44XXtablet; \
+	echo "/* Generarated file. Do not edit */" >./include/config.h; \
+	echo "#include <configs/omap44XXtablet.h>" >>./include/config.h; \
+	echo "#define CONFIG_MPU_1000 1"	>>./include/config.h; \
+	echo "MPU at 1GHz revision.." ; \
+
 omap3430labrador_config :    unconfig
 	@./mkconfig $(@:_config=) arm omap3 omap3430labrador
 
