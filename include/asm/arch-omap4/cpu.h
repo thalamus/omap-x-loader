@@ -537,6 +537,7 @@ struct dpll_param {
 	unsigned int m5;
 	unsigned int m6;
 	unsigned int m7;
+	unsigned int sd_div;
 };
 
 /*Functions for silicon revision */
