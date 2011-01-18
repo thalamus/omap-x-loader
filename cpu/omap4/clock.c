@@ -177,7 +177,12 @@ struct dpll_param core_dpll_param_l3_190[7] = {
 #endif
 };
 
-/* ABE parameters */
+/*
+ * ABE parameters
+ *
+ * By default DPLL_ABE is driven from 32KHz clock.  To drive it from SYS_CK
+ * set CONFIG_OMAP4_ABE_SYSCK
+ */
 struct dpll_param abe_dpll_param[7] = {
 	/* 12M values */
 	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
@@ -192,10 +197,10 @@ struct dpll_param abe_dpll_param[7] = {
 	/* 27M values */
 	{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0},
 	/* 38.4M values */
-#ifdef CONFIG_OMAP4_SDC
+#ifdef CONFIG_OMAP4_ABE_SYSCK
 	{0x40, 0x18, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0},
 #else
-	{0x40, 0x18, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0},
+	{0x2ee, 0x0, 0x1, 0x1, 0x0, 0x0, 0x0, 0x0, 0x0},
 #endif
 };
 
@@ -318,12 +323,11 @@ static void configure_per_dpll(u32 clk_index)
 	return;
 }
 
+/* DPLL_ABE is driven by 32KHz timer by default */
 static void configure_abe_dpll(u32 clk_index)
 {
 	dpll_param *dpll_param_p;
-
-	/* Select sys_clk as ref clk for ABE dpll */
-	sr32(CM_ABE_PLL_REF_CLKSEL, 0, 32, 0x0);
+	u32 clkmode_value;
 
 	/* Unlock the ABE dpll */
 	sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_MN_POWER_BYPASS);
@@ -335,17 +339,34 @@ static void configure_abe_dpll(u32 clk_index)
 	/* Disable autoidle */
 	sr32(CM_AUTOIDLE_DPLL_ABE, 0, 3, 0x0);
 
+	/*
+	 * Enable higher frequencies when fed from 32KHz clk.  Sets
+	 * DPLL_REGM4XEN, DPLL_LPMODE, DPLL_RELOCK_RAMP_EN, DPLL_RAMP_RATE and
+	 * DPLL_DRIFTGUARD_EN in the CM_CLKMODE_DPLL_ABE register.
+	 *
+	 * Public TRM does not cover all of this: DPLL_RAMP_RATE (bit 5)
+	 * selects time spent at each stage of clock ramping process.  We
+	 * spend 4 REFCLKs.  DPLL_RELOCK_RAMP_EN (bit 9) enables the clock
+	 * ramping feature, using the rate specified in DPLL_RAMP_RATE.
+	 *
+	 * Also the DPLL_REGM4XEN bit provides a magic 4x multplier to
+	 * existing MN dividers.  This is how a DPLL driven from 32KHz clock
+	 * can achieve 196.608MHz.
+	 */
+#ifndef CONFIG_OMAP4_ABE_SYSCK
+	clkmode_value = (BIT5 | BIT8 | BIT9 | BIT10 | BIT11);
+	sr32(CM_CLKMODE_DPLL_ABE, 0, 12, clkmode_value);
+#endif
+
 	sr32(CM_CLKSEL_DPLL_ABE, 8, 11, dpll_param_p->m);
-	sr32(CM_CLKSEL_DPLL_ABE, 0, 6, dpll_param_p->n);
+	sr32(CM_CLKSEL_DPLL_ABE, 0, 7, dpll_param_p->n);
 
 	/* Force DPLL CLKOUTHIF to stay enabled */
 	sr32(CM_DIV_M2_DPLL_ABE, 0, 32, 0x500);
 	sr32(CM_DIV_M2_DPLL_ABE, 0, 5, dpll_param_p->m2);
-	sr32(CM_DIV_M2_DPLL_ABE, 8, 1, 0x1);
 	/* Force DPLL CLKOUTHIF to stay enabled */
 	sr32(CM_DIV_M3_DPLL_ABE, 0, 32, 0x100);
 	sr32(CM_DIV_M3_DPLL_ABE, 0, 5, dpll_param_p->m3);
-	sr32(CM_DIV_M3_DPLL_ABE, 8, 1, 0x1);
 
 	/* Lock the abe dpll */
 	sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_LOCK);
