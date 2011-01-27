@@ -158,7 +158,6 @@ static void emif_config(unsigned int base, const struct ddr_regs *ddr_regs)
 	__raw_writel(ddr_regs->tim3, base + EMIF_SDRAM_TIM_3);
 	__raw_writel(ddr_regs->tim3, base + EMIF_SDRAM_TIM_3_SHDW);
 
-	__raw_writel(ddr_regs->zq_config, base + EMIF_ZQ_CONFIG);
 	/*
 	 * EMIF_PWR_MGMT_CTRL
 	 */
@@ -188,6 +187,8 @@ static void emif_config(unsigned int base, const struct ddr_regs *ddr_regs)
 
 	/* wait for tZQINIT=1us  */
 	spin_delay(10);
+
+	__raw_writel(ddr_regs->zq_config, base + EMIF_ZQ_CONFIG);
 
 	/* set MR1 register */
 	__raw_writel(MR1_ADDR, base + EMIF_LPDDR2_MODE_REG_CFG);
