@@ -186,7 +186,7 @@ static void emif_config(unsigned int base, const struct ddr_regs *ddr_regs)
 	__raw_writel(MR10_ZQINIT, base + EMIF_LPDDR2_MODE_REG_DATA);
 
 	/* wait for tZQINIT=1us  */
-	spin_delay(10);
+	spin_delay(2000); /* value for up to 2GHz MPU spin */
 
 	__raw_writel(ddr_regs->zq_config, base + EMIF_ZQ_CONFIG);
 
