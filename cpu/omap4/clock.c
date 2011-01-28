@@ -329,6 +329,10 @@ static void configure_abe_dpll(u32 clk_index)
 	dpll_param *dpll_param_p;
 	u32 clkmode_value;
 
+#ifdef CONFIG_OMAP4_ABE_SYSCK
+	sr32(CM_ABE_PLL_REF_CLKSEL, 0, 32, 0x0);
+#endif
+
 	/* Unlock the ABE dpll */
 	sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_MN_POWER_BYPASS);
 	wait_on_value(BIT0, 0, CM_IDLEST_DPLL_ABE, LDELAY);
@@ -364,9 +368,11 @@ static void configure_abe_dpll(u32 clk_index)
 	/* Force DPLL CLKOUTHIF to stay enabled */
 	sr32(CM_DIV_M2_DPLL_ABE, 0, 32, 0x500);
 	sr32(CM_DIV_M2_DPLL_ABE, 0, 5, dpll_param_p->m2);
+	sr32(CM_DIV_M2_DPLL_ABE, 8, 1, 0x1);
 	/* Force DPLL CLKOUTHIF to stay enabled */
 	sr32(CM_DIV_M3_DPLL_ABE, 0, 32, 0x100);
 	sr32(CM_DIV_M3_DPLL_ABE, 0, 5, dpll_param_p->m3);
+	sr32(CM_DIV_M3_DPLL_ABE, 8, 1, 0x1);
 
 	/* Lock the abe dpll */
 	sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_LOCK);
