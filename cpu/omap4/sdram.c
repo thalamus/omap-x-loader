@@ -238,7 +238,7 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 
 	if (rev == OMAP4430_ES1_0)
 	{
-		/* Configurte the Control Module DDRIO device */
+		/* Configure the Control Module DDRIO device */
 		__raw_writel(0x1c1c1c1c, 0x4A100638);
 		__raw_writel(0x1c1c1c1c, 0x4A10063c);
 		__raw_writel(0x1c1c1c1c, 0x4A100640);
@@ -256,6 +256,22 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 		__raw_writel(0x9e9e9e9e, 0x4A100650);
 		/* LPDDR2IO set to NMOS PTV */
 		__raw_writel(0x00ffc000, 0x4A100704);
+	} else if (rev >= OMAP4430_ES2_1) {
+		__raw_writel(0x7c7c7c7c, 0x4A100638);
+		__raw_writel(0x7c7c7c7c, 0x4A10063c);
+		__raw_writel(0x7c7c7c00, 0x4A100640);
+		__raw_writel(0x7c7c7c7c, 0x4A100648);
+		__raw_writel(0x7c7c7c7c, 0x4A10064c);
+		__raw_writel(0x7c7c7c00, 0x4A100650);
+		/*
+		 * Adjust Internal Vref controls to reduce leakage
+		 * for chip retention (Core OSWR)
+		 */
+		__raw_writel(0xa388bc03, 0x4A100644);
+		__raw_writel(0xa388bc03, 0x4A100654);
+		/* LPDDR2IO set to NMOS PTV */
+		/* To be updated according to Process */
+		/*__raw_writel(0x00ffc000, 0x4A100704); */
 	}
 
 	__raw_writel(0x00000000, DMM_BASE + DMM_LISA_MAP_2);
