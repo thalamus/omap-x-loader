@@ -760,6 +760,13 @@ static void enable_all_clocks(void)
 	sr32(CM_L3INIT_USBPHY_CLKCTRL, 0, 32, 0x301);
 	sr32(CM_L3INIT_HSUSBOTG_CLKCTRL, 0, 32, 0x1);
 
+	/* Enable DSS clocks:
+	 * In future we want to enable DSS in bootloader to show splash screen
+	 */
+	sr32(PM_DSS_PWRSTCTRL, 0, 2, 0x3);
+	sr32(CM_DSS_CLKSTCTRL, 0, 2, 0x2);
+	sr32(CM_DSS_DSS_CLKCTRL, 0, 11, 0x702);
+
 	return;
 }
 

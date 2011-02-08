@@ -408,6 +408,9 @@
 #define CM_DSS_DSS_CLKCTRL              0x4a009120
 #define CM_DSS_DEISS_CLKCTRL            0x4a009128
 
+/* PM.DSS */
+#define PM_DSS_PWRSTCTRL		0x4a307100
+
 /* CM2.SGX */
 #define CM_SGX_CLKSTCTRL                0x4a009200
 #define CM_SGX_SGX_CLKCTRL              0x4a009220
