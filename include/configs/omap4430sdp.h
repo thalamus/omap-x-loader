@@ -41,7 +41,6 @@
 #define CONFIG_4430SDP           1    /* working with SDP */
 
 #define CORE_190MHZ		1
-#define CONFIG_OMAP4_ABE_SYSCK	1
 /* Enable the below macro if MMC boot support is required */
 #define CONFIG_MMC               1
 #if defined(CONFIG_MMC)
