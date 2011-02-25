@@ -329,10 +329,8 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	 * be kept higher than default 0x7. As per recommondation 0x0A will
 	 * be used for better performance with REG_LL_THRESH_MAX = 0x00
 	 */
-	if (rev == OMAP4430_ES1_0) {
-		__raw_writel(0x0A0000FF, EMIF1_BASE + EMIF_L3_CONFIG);
-		__raw_writel(0x0A0000FF, EMIF2_BASE + EMIF_L3_CONFIG);
-	}
+	__raw_writel(0x0A0000FF, EMIF1_BASE + EMIF_L3_CONFIG);
+	__raw_writel(0x0A0000FF, EMIF2_BASE + EMIF_L3_CONFIG);
 
 	/*
 	 * DMM : DMM_LISA_MAP_0(Section_0)
