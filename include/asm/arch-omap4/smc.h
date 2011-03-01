@@ -19,6 +19,7 @@
 /* Defines for ROM Services */
 /* PL310 power on reset */
 #define ROM_SERVICE_PL310_AUXCR_SVC	0x109
+#define ROM_SERVICE_PL310_POR_SVC	0x113
 
 /*
  * Define PPA provided Services here PPA_SERVICE_xyz
