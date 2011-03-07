@@ -71,6 +71,21 @@ int cpu_init (void)
 		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
 	}
+
+	/* If unit does not have SLDO trim, set override
+	 * and force max multiplication factor to ensure
+	 * proper SLDO voltage at low OPP's
+	 */
+	if (es_revision == OMAP4430_ES2_2) {
+		/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
+		if (!__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL)) {
+			/* Set M factor to max (2.7) */
+			__raw_writel(0x0401040f, IVA_LDOSRAM_VOLTAGE_CTRL);
+			__raw_writel(0x0401040f, MPU_LDOSRAM_VOLTAGE_CTRL);
+			__raw_writel(0x0401040f, CORE_LDOSRAM_VOLTAGE_CTRL);
+		}
+	}
+
 	return 0;
 }
 
