@@ -72,9 +72,11 @@ int cpu_init (void)
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
 	}
 
-	/* If unit does not have SLDO trim, set override
+	/* 1. If unit does not have SLDO trim, set override
 	 * and force max multiplication factor to ensure
 	 * proper SLDO voltage at low OPP's
+	 * 2. Trim VDAC value for TV out as recomended to avoid
+	 * potential instabilities at low OPP's
 	 */
 	if (es_revision == OMAP4430_ES2_2) {
 		/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
@@ -83,6 +85,7 @@ int cpu_init (void)
 			__raw_writel(0x0401040f, IVA_LDOSRAM_VOLTAGE_CTRL);
 			__raw_writel(0x0401040f, MPU_LDOSRAM_VOLTAGE_CTRL);
 			__raw_writel(0x0401040f, CORE_LDOSRAM_VOLTAGE_CTRL);
+			__raw_writel(0x000001c0, SYSCTRL_PADCONF_CORE_EFUSE_1);
 		}
 	}
 
