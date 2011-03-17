@@ -72,12 +72,17 @@ int cpu_init (void)
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
 	}
 
-	/* 1. If unit does not have SLDO trim, set override
+	/* For ES2.2
+	 * 1. If unit does not have SLDO trim, set override
 	 * and force max multiplication factor to ensure
 	 * proper SLDO voltage at low OPP's
 	 * 2. Trim VDAC value for TV out as recomended to avoid
 	 * potential instabilities at low OPP's
+	 * 3.For all ESx.y trimmed and untrimmed units
+	 * Override efuse with LPDDR P:16/N:16 and
+	 * smart IO P:0/N:0 as per recomendation
 	 */
+	__raw_writel(0x00084000, SYSCTRL_PADCONF_CORE_EFUSE_2);
 	if (es_revision == OMAP4430_ES2_2) {
 		/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
 		if (!__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL)) {
