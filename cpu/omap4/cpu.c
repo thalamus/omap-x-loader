@@ -110,24 +110,33 @@ unsigned int cortex_a9_rev(void)
 
 unsigned int omap_revision(void)
 {
-	unsigned int chip_rev = 0;
+	/*
+	 * For some of the ES2/ES1 boards ID_CODE is not reliable:
+	 * Also, ES1 and ES2 have different ARM revisions
+	 * So use ARM revision for identification
+	 */
 	unsigned int rev = cortex_a9_rev();
 
-	/* ES1.0 and ES2.0 revision support */
-	switch(rev) {
-		case 0x410FC091:
+	switch (rev) {
+		case MIDR_CORTEX_A9_R0P1:
 			return OMAP4430_ES1_0;
-		case 0x411FC092:
-			chip_rev = (__raw_readl(CONTROL_ID_CODE)  >> 28);
-			if(chip_rev == 0x3)
-				return OMAP4430_ES2_1;
-			else if(chip_rev >= 0x4)
-				return OMAP4430_ES2_2;
-			else
-				return OMAP4430_ES2_0;
+		case MIDR_CORTEX_A9_R1P2:
+			rev = readl(CONTROL_ID_CODE);
+			switch (rev) {
+				case OMAP4_CONTROL_ID_CODE_ES2_3:
+					return OMAP4430_ES2_3;
+				case OMAP4_CONTROL_ID_CODE_ES2_2:
+					return OMAP4430_ES2_2;
+				case OMAP4_CONTROL_ID_CODE_ES2_1:
+					return OMAP4430_ES2_1;
+				case OMAP4_CONTROL_ID_CODE_ES2_0:
+					return OMAP4430_ES2_0;
+				default:
+					return OMAP4430_ES2_0;
+			}
+		default:
+			return OMAP4430_SILICON_ID_INVALID;
 	}
-
-	return OMAP4430_SILICON_ID_INVALID;
 }
 
 u32 get_device_type(void)

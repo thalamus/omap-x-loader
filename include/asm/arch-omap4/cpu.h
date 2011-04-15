@@ -513,12 +513,23 @@
 	extern void lcd_panel_disable(void);
 #endif
 
+/* Cortex-A9 revisions */
+#define MIDR_CORTEX_A9_R0P1     0x410FC091
+#define MIDR_CORTEX_A9_R1P2     0x411FC092
+
 /* Silicon revisions */
+#define OMAP4_CONTROL_ID_CODE_ES1_0	0x0B85202F
+#define OMAP4_CONTROL_ID_CODE_ES2_0	0x1B85202F
+#define OMAP4_CONTROL_ID_CODE_ES2_1	0x3B95C02F
+#define OMAP4_CONTROL_ID_CODE_ES2_2	0x4B95C02F
+#define OMAP4_CONTROL_ID_CODE_ES2_3	0x6B95C02F
+
 #define OMAP4430_SILICON_ID_INVALID	0
 #define OMAP4430_ES1_0	1
 #define OMAP4430_ES2_0	2
 #define OMAP4430_ES2_1	3
 #define OMAP4430_ES2_2	4
+#define OMAP4430_ES2_3	6
 
 #ifndef	__ASSEMBLY__
 
