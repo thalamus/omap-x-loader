@@ -516,13 +516,18 @@
 /* Cortex-A9 revisions */
 #define MIDR_CORTEX_A9_R0P1     0x410FC091
 #define MIDR_CORTEX_A9_R1P2     0x411FC092
+/* TODO: change during wakeup */
+#define MIDR_CORTEX_A9_R2P8	0x412FC096
 
-/* Silicon revisions */
+/* 4430 Silicon revisions */
 #define OMAP4_CONTROL_ID_CODE_ES1_0	0x0B85202F
 #define OMAP4_CONTROL_ID_CODE_ES2_0	0x1B85202F
 #define OMAP4_CONTROL_ID_CODE_ES2_1	0x3B95C02F
 #define OMAP4_CONTROL_ID_CODE_ES2_2	0x4B95C02F
 #define OMAP4_CONTROL_ID_CODE_ES2_3	0x6B95C02F
+
+/* 4460 Silicon revisions */
+#define OMAP4_CONTROL_ID_CODE_4460_ES1	0x0B94E02F
 
 #define OMAP4430_SILICON_ID_INVALID	0
 #define OMAP4430_ES1_0	1
@@ -530,6 +535,8 @@
 #define OMAP4430_ES2_1	3
 #define OMAP4430_ES2_2	4
 #define OMAP4430_ES2_3	6
+#define OMAP4460_ES1_0 10
+
 
 #ifndef	__ASSEMBLY__
 
