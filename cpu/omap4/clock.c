@@ -233,6 +233,9 @@ typedef struct dpll_param dpll_param;
 static void configure_mpu_dpll(u32 clk_index)
 {
 	dpll_param *dpll_param_p;
+	u32 omap4_rev, emif_div_4 = 1, abe_div_8 = 1;
+
+	omap4_rev = omap_revision();
 
 	/* Unlock the MPU dpll */
 	sr32(CM_CLKMODE_DPLL_MPU, 0, 3, PLL_MN_POWER_BYPASS);
@@ -240,6 +243,11 @@ static void configure_mpu_dpll(u32 clk_index)
 
 	/* Program MPU DPLL */
 	dpll_param_p = &mpu_dpll_param[clk_index];
+
+	if (omap4_rev >= OMAP4460_ES1_0) {
+		sr32(CM_MPU_MPU_CLKCTRL, 24, 1, emif_div_4);
+		sr32(CM_MPU_MPU_CLKCTRL, 25, 1, abe_div_8);
+	}
 
 	sr32(CM_AUTOIDLE_DPLL_MPU, 0, 3, 0x0); /* Disable DPLL autoidle */
 
