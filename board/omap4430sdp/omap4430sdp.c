@@ -318,6 +318,14 @@ int board_init(void)
 void set_muxconf_regs(void)
 {
 	MUX_DEFAULT_OMAP4();
+
+	/*
+	 * Changes for OMAP4460:
+	 * gpio_wk7 is used for TPS controlling
+	 */
+	if (omap_revision() >= OMAP4460_ES1_0)
+		writew(M3, CONTROL_PADCONF_WKUP + CONTROL_WKUP_PAD1_FREF_CLK4_REQ);
+
 	return;
 }
 

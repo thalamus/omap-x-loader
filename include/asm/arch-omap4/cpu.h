@@ -170,6 +170,12 @@
 #define CM_WKUP_RTC_CLKCTRL		0x4a307880
 #define CM_WKUP_BANDGAP_CLKCTRL		0x4a307888
 
+/* DEVICE_PRM Registers */
+#define PRM_VC_VAL_BYPASS               0x4a307ba0
+#define PRM_VC_CFG_CHANNEL              0x4a307ba4
+#define PRM_VC_CFG_I2C_MODE             0x4a307ba8
+#define PRM_VC_CFG_I2C_CLK              0x4a307bac
+
 /* CM1.CKGEN module registers */
 #define CM_CLKSEL_CORE				0x4a004100
 #define CM_CLKSEL_ABE				0x4a004108
@@ -512,6 +518,34 @@
 	extern void lcd_disable(void);
 	extern void lcd_panel_disable(void);
 #endif
+
+
+/* PRM_VC_VAL_BYPASS */
+#define PRM_VC_I2C_CHANNEL_FREQ_KHZ     400
+
+#define PRM_VC_VAL_BYPASS_VALID_BIT     0x1000000
+#define PRM_VC_VAL_BYPASS_SLAVEADDR_SHIFT       0
+#define PRM_VC_VAL_BYPASS_SLAVEADDR_MASK        0x7F
+#define PRM_VC_VAL_BYPASS_REGADDR_SHIFT         8
+#define PRM_VC_VAL_BYPASS_REGADDR_MASK          0xFF
+#define PRM_VC_VAL_BYPASS_DATA_SHIFT            16
+#define PRM_VC_VAL_BYPASS_DATA_MASK             0xFF
+
+/* TPS */
+#define TPS62361_I2C_SLAVE_ADDR         0x60
+#define TPS62361_REG_ADDR_SET0          0x0
+#define TPS62361_REG_ADDR_SET1          0x1
+#define TPS62361_REG_ADDR_SET2          0x2
+#define TPS62361_REG_ADDR_SET3          0x3
+#define TPS62361_REG_ADDR_CTRL          0x4
+#define TPS62361_REG_ADDR_TEMP          0x5
+#define TPS62361_REG_ADDR_RMP_CTRL      0x6
+#define TPS62361_REG_ADDR_CHIP_ID       0x8
+#define TPS62361_REG_ADDR_CHIP_ID_2     0x9
+
+#define TPS62361_BASE_VOLT_MV   500
+#define TPS62361_VSEL0_GPIO     7
+
 
 /* Cortex-A9 revisions */
 #define MIDR_CORTEX_A9_R0P1     0x410FC091

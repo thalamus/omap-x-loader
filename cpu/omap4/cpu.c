@@ -177,9 +177,41 @@ unsigned int fat_boot(void)
 		return 0;
 }
 
+static void do_scale_tps62361(u32 reg, u32 val)
+{
+	u32 temp = 0;
+	u32 l = 0;
+
+	/*
+	 * Select SET1 in TPS62361:
+	 * VSEL1 is grounded on board. So the following selects
+	 * VSEL1 = 0 and VSEL0 = 1
+	 */
+
+	/* set GPIO-7 direction as output */
+	l = __raw_readl(0x4A310134);
+	l &= ~(1 << TPS62361_VSEL0_GPIO);
+	__raw_writel(l, 0x4A310134);
+
+	/* set GPIO-7 data-out */
+	l = 1 << TPS62361_VSEL0_GPIO;
+	__raw_writel(l, 0x4A310194);
+
+	temp = TPS62361_I2C_SLAVE_ADDR |
+		(reg << PRM_VC_VAL_BYPASS_REGADDR_SHIFT) |
+		(val << PRM_VC_VAL_BYPASS_DATA_SHIFT) |
+		PRM_VC_VAL_BYPASS_VALID_BIT;
+
+	writel(temp, PRM_VC_VAL_BYPASS);
+
+	while (readl(PRM_VC_VAL_BYPASS) & PRM_VC_VAL_BYPASS_VALID_BIT)
+                ;
+}
+
 #if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
 static void scale_vcores(void)
 {
+	u32 volt;
 	unsigned int rev = omap_revision();
 	/* For VC bypass only VCOREx_CGF_FORCE  is necessary and
 	 * VCOREx_CFG_VOLTAGE  changes can be discarded
@@ -191,7 +223,12 @@ static void scale_vcores(void)
 
 	/* set VCORE1 force VSEL */
 	/* PRM_VC_VAL_BYPASS) */
-        if(rev == OMAP4430_ES1_0)
+	if (rev >= OMAP4460_ES1_0) {
+		volt = 1400;
+		volt -= TPS62361_BASE_VOLT_MV;
+		volt /= 10;
+		do_scale_tps62361(TPS62361_REG_ADDR_SET1, volt);
+	} else if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x3B5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x3A5512, 0x4A307BA0);
