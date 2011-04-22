@@ -221,14 +221,20 @@ static void scale_vcores(void)
 	/* PRM_VC_CFG_I2C_CLK */
 	__raw_writel(0x6026, 0x4A307BAC);
 
-	/* set VCORE1 force VSEL */
-	/* PRM_VC_VAL_BYPASS) */
+	/* Enable 1.4V from TPS for vdd_mpu on 4460 */
 	if (rev >= OMAP4460_ES1_0) {
 		volt = 1400;
 		volt -= TPS62361_BASE_VOLT_MV;
 		volt /= 10;
 		do_scale_tps62361(TPS62361_REG_ADDR_SET1, volt);
-	} else if(rev == OMAP4430_ES1_0)
+	}
+
+	/* set VCORE1 force VSEL */
+	/* PRM_VC_VAL_BYPASS) */
+	/* VCORE 1 - vdd_core on 4460 and vdd_mpu on 4430*/
+	if (rev >= OMAP4460_ES1_0)
+		__raw_writel(0x355512, 0x4A307BA0);
+	else if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x3B5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x3A5512, 0x4A307BA0);
@@ -245,6 +251,7 @@ static void scale_vcores(void)
 
 	/* FIXME: set VCORE2 force VSEL, Check the reset value */
 	/* PRM_VC_VAL_BYPASS) */
+	/* VCORE 2 - vdd_iva on both 4430/4460 */
         if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x315B12, 0x4A307BA0);
 	else
@@ -258,7 +265,10 @@ static void scale_vcores(void)
 
 	/*/set VCORE3 force VSEL */
 	/* PRM_VC_VAL_BYPASS */
-        if(rev == OMAP4430_ES1_0)
+	/* VCORE 3 - vdd_core on 4430, none for 4460 */
+	if (rev >= OMAP4460_ES1_0)
+		return;
+	else if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x316112, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x296112, 0x4A307BA0);
