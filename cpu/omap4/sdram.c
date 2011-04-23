@@ -277,6 +277,11 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	__raw_writel(0x00000000, DMM_BASE + DMM_LISA_MAP_2);
 	__raw_writel(0xFF020100, DMM_BASE + DMM_LISA_MAP_3);
 
+	if (rev >= OMAP4460_ES1_0) {
+		__raw_writel(0x00000000, MA_BASE + DMM_LISA_MAP_2);
+		__raw_writel(0xFF020100, MA_BASE + DMM_LISA_MAP_3);
+	}
+
 	/* DDR needs to be initialised @ 19.2 MHz
 	 * So put core DPLL in bypass mode
 	 * Configure the Core DPLL but don't lock it
@@ -329,8 +334,13 @@ void do_ddr_init(const struct ddr_regs *emif1_ddr_regs,
 	 * be kept higher than default 0x7. As per recommondation 0x0A will
 	 * be used for better performance with REG_LL_THRESH_MAX = 0x00
 	 */
-	__raw_writel(0x0A0000FF, EMIF1_BASE + EMIF_L3_CONFIG);
-	__raw_writel(0x0A0000FF, EMIF2_BASE + EMIF_L3_CONFIG);
+	if (omap_revision() >= OMAP4460_ES1_0) {
+		__raw_writel(0x0A300000, EMIF1_BASE + EMIF_L3_CONFIG);
+		__raw_writel(0x0A300000, EMIF2_BASE + EMIF_L3_CONFIG);
+	} else {
+		__raw_writel(0x0A0000FF, EMIF1_BASE + EMIF_L3_CONFIG);
+		__raw_writel(0x0A0000FF, EMIF2_BASE + EMIF_L3_CONFIG);
+	}
 
 	/*
 	 * DMM : DMM_LISA_MAP_0(Section_0)

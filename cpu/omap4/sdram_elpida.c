@@ -118,7 +118,10 @@ void __ddr_init(void)
 	 */
 	if (rev == OMAP4430_ES1_0)
 		__raw_writel(0x80540300, DMM_BASE + DMM_LISA_MAP_0);
-	else
+	else if (rev >= OMAP4460_ES1_0) {
+		__raw_writel(0x80640300, DMM_BASE + DMM_LISA_MAP_0);
+		__raw_writel(0x80640300, MA_BASE + DMM_LISA_MAP_0);
+	} else
 		__raw_writel(0x80640300, DMM_BASE + DMM_LISA_MAP_0);
 
 	/* same memory part on both EMIFs */
