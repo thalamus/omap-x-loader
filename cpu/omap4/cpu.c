@@ -134,7 +134,7 @@ unsigned int omap_revision(void)
 				default:
 					return OMAP4430_ES2_0;
 			}
-		case MIDR_CORTEX_A9_R2P8:
+		case MIDR_CORTEX_A9_R2P10:
 			return OMAP4460_ES1_0;
 		default:
 			return OMAP4430_SILICON_ID_INVALID;
