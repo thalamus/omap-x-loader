@@ -37,6 +37,8 @@
 #include <asm/arch/cpu.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/arch/smc.h>
+#include <asm/arch/clocks.h>
+
 
 /* See also ARM Ref. Man. */
 #define C1_MMU		(1<<0)		/* mmu off/on */
@@ -297,6 +299,10 @@ void s_init(void)
 {
 	set_muxconf_regs();
 	spin_delay(100);
+
+	/* WKUP clocks */
+	sr32(CM_WKUP_GPIO1_CLKCTRL, 0, 32, 0x1);
+	wait_on_value(BIT17|BIT16, 0, CM_WKUP_GPIO1_CLKCTRL, LDELAY);
 
 	/* Set VCORE1 = 1.3 V, VCORE2 = VCORE3 = 1.21V */
 #if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
