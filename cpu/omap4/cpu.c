@@ -36,8 +36,9 @@
 #include <asm/arch/bits.h>
 #include <asm/arch/cpu.h>
 #include <asm/arch/sys_proto.h>
-#include <asm/arch/smc.h>
+#include <asm/arch/rom_hal_api.h>
 #include <asm/arch/clocks.h>
+#include <asm/arch/rom_public_api_func.h>
 
 
 /* See also ARM Ref. Man. */
@@ -60,17 +61,21 @@ int cpu_init (void)
 
 	es_revision = omap_revision();
 
+	/* OMAP 4430 ES1.0 is the only device rev that does not support
+	 * modifying PL310.POR. Thus this is will be applied for any 4430 rev
+	 * (except 1.0) and any 4460 */
 	if (es_revision > OMAP4430_ES1_0 && get_device_type() != GP_DEVICE) {
 		/* Set PL310 Prefetch Offset Register w/PPA svc*/
 		omap_smc_ppa(PPA_SERVICE_PL310_POR, 0, 0x7, 1, PL310_POR);
 		/* Enable L2 data prefetch */
-		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
+		omap_smc_rom(ROM_SERVICE_PL310_AUXCR,
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
+	/* This ROM svc is availble only for OMAP4430 ES2.2 or any 4460 */
 	} else if (es_revision > OMAP4430_ES2_1) {
 		/* Set PL310 Prefetch Offset Register using ROM svc */
-		omap_smc_rom(ROM_SERVICE_PL310_POR_SVC, PL310_POR);
+		omap_smc_rom(ROM_SERVICE_PL310_POR, PL310_POR);
 		/* Enable L2 data prefetch */
-		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
+		omap_smc_rom(ROM_SERVICE_PL310_AUXCR,
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
 	}
 
