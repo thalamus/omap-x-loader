@@ -90,7 +90,8 @@ int cpu_init (void)
 	 * smart IO P:0/N:0 as per recomendation
 	 */
 	__raw_writel(0x00084000, SYSCTRL_PADCONF_CORE_EFUSE_2);
-	if (es_revision == OMAP4430_ES2_2) {
+
+	if (es_revision >= OMAP4430_ES2_2) {
 		/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
 		if (!__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL)) {
 			/* Set M factor to max (2.7) */
