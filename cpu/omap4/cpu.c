@@ -143,6 +143,15 @@ unsigned int omap_revision(void)
 	}
 }
 
+u32 omap4_silicon_type(void)
+{
+	u32 si_type = readl(STD_FUSE_PROD_ID_1);
+	si_type = get_bit_field(si_type, PROD_ID_1_SILICON_TYPE_SHIFT,
+		PROD_ID_1_SILICON_TYPE_MASK);
+	return si_type;
+}
+
+
 u32 get_device_type(void)
 {
 	/*

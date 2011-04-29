@@ -86,6 +86,15 @@
 /* TAP information  dont know for 3430*/
 #define OMAP44XX_TAP_BASE	(0x49000000) /*giving some junk for virtio */
 
+/* STD_FUSE_PROD_ID_1 */
+#define STD_FUSE_PROD_ID_1              (OMAP44XX_CTRL_GEN_BASE + 0x218)
+#define PROD_ID_1_SILICON_TYPE_SHIFT    16
+#define PROD_ID_1_SILICON_TYPE_MASK     (3 << 16)
+
+#define PROD_ID_1_SILICON_TYPE_LOW_PERF         0
+#define PROD_ID_1_SILICON_TYPE_STD_PERF         1
+#define PROD_ID_1_SILICON_TYPE_HIGH_PERF        2
+
 /* UART */
 #define OMAP44XX_UART1			(OMAP44XX_L4_PER+0x6a000)
 #define OMAP44XX_UART2			(OMAP44XX_L4_PER+0x6c000)

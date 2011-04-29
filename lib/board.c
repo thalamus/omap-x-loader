@@ -111,11 +111,21 @@ void start_armboot (void)
   	init_fnc_t **init_fnc_ptr;
 	uchar *buf;
 	char boot_dev_name[8];
+	u32 si_type, omap4_rev;
  
    	for (init_fnc_ptr = init_sequence; *init_fnc_ptr; ++init_fnc_ptr) {
 		if ((*init_fnc_ptr)() != 0) {
 			hang ();
 		}
+	}
+
+	omap4_rev = omap_revision();
+	if (omap4_rev >= OMAP4460_ES1_0) {
+		si_type = omap4_silicon_type();
+		if (si_type == PROD_ID_1_SILICON_TYPE_HIGH_PERF)
+			printf("OMAP4460: 1.5 GHz capable SOM\n");
+		else if (si_type == PROD_ID_1_SILICON_TYPE_STD_PERF)
+			printf("OMAP4460: 1.2 GHz capable SOM\n");
 	}
 #ifdef START_LOADB_DOWNLOAD
 	strcpy(boot_dev_name, "UART");
