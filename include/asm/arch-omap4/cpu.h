@@ -551,6 +551,7 @@
 /* Cortex-A9 revisions */
 #define MIDR_CORTEX_A9_R0P1     0x410FC091
 #define MIDR_CORTEX_A9_R1P2     0x411FC092
+#define MIDR_CORTEX_A9_R1P3     0x411FC093
 /* TODO: change during wakeup */
 #define MIDR_CORTEX_A9_R2P10	0x412FC09A
 
