@@ -123,8 +123,6 @@ unsigned int omap_revision(void)
 		case MIDR_CORTEX_A9_R1P2:
 			rev = readl(CONTROL_ID_CODE);
 			switch (rev) {
-				case OMAP4_CONTROL_ID_CODE_ES2_3:
-					return OMAP4430_ES2_3;
 				case OMAP4_CONTROL_ID_CODE_ES2_2:
 					return OMAP4430_ES2_2;
 				case OMAP4_CONTROL_ID_CODE_ES2_1:
@@ -134,7 +132,9 @@ unsigned int omap_revision(void)
 				default:
 					return OMAP4430_ES2_0;
 			}
-		case MIDR_CORTEX_A9_R2P8:
+		case MIDR_CORTEX_A9_R1P3:
+			return OMAP4430_ES2_3;
+		case MIDR_CORTEX_A9_R2P10:
 			return OMAP4460_ES1_0;
 		default:
 			return OMAP4430_SILICON_ID_INVALID;
