@@ -225,7 +225,6 @@ static void do_scale_tps62361(u32 reg, u32 val)
                 ;
 }
 
-#if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
 static void scale_vcores(void)
 {
 	u32 volt;
@@ -301,7 +300,6 @@ static void scale_vcores(void)
 	__raw_writel(__raw_readl(0x4A306010), 0x4A306010);
 
 }
-#endif
 
 
 
@@ -320,9 +318,7 @@ void s_init(void)
 	wait_on_value(BIT17|BIT16, 0, CM_WKUP_GPIO1_CLKCTRL, LDELAY);
 
 	/* Set VCORE1 = 1.3 V, VCORE2 = VCORE3 = 1.21V */
-#if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
 	scale_vcores();
-#endif	
 
 	prcm_init();
 	ddr_init();
