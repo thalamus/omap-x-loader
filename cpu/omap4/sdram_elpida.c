@@ -51,11 +51,20 @@ const struct ddr_regs ddr_regs_elpida2G_400_mhz_2cs = {
 	.tim1		= 0x10eb0662,
 	.tim2		= 0x20370dd2,
 	.tim3		= 0x00b1c33f,
+#ifdef CONFIG_OMAP4460
+	.phy_ctrl_1	= 0x449FF408,
+#else
 	.phy_ctrl_1	= 0x849FF408,
+#endif
 	.ref_ctrl	= 0x00000618,
+#ifdef CONFIG_OMAP4460
+	.config_init	= 0x80800eb9,
+	.config_final	= 0x80801ab9,
+#else
 	.config_init	= 0x80000eb9,
 	.config_final	= 0x80001ab9,
-	.zq_config	= 0xD00b3215,
+#endif
+	.zq_config	= 0xd00b3215,
 	.mr1		= 0x83,
 	.mr2		= 0x4
 };
