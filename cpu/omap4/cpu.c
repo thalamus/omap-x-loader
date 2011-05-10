@@ -237,9 +237,9 @@ static void scale_vcores(void)
 	/* PRM_VC_CFG_I2C_CLK */
 	__raw_writel(0x6026, 0x4A307BAC);
 
-	/* Enable 1.4V from TPS for vdd_mpu on 4460 */
+	/* Enable 1.3V from TPS for vdd_mpu on 4460 */
 	if (rev >= OMAP4460_ES1_0) {
-		volt = 1400;
+		volt = 1300;
 		volt -= TPS62361_BASE_VOLT_MV;
 		volt /= 10;
 		do_scale_tps62361(TPS62361_REG_ADDR_SET1, volt);
@@ -249,7 +249,7 @@ static void scale_vcores(void)
 	/* PRM_VC_VAL_BYPASS) */
 	/* VCORE 1 - vdd_core on 4460 and vdd_mpu on 4430*/
 	if (rev >= OMAP4460_ES1_0)
-		__raw_writel(0x355512, 0x4A307BA0);
+		__raw_writel(0x305512, 0x4A307BA0);
 	else if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x3B5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
@@ -271,7 +271,11 @@ static void scale_vcores(void)
         if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x315B12, 0x4A307BA0);
 	else
+#ifdef CONFIG_4460SDP
+		__raw_writel(0x305B12, 0x4A307BA0);
+#else
 		__raw_writel(0x295B12, 0x4A307BA0);
+#endif
 	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
 	while(__raw_readl(0x4A307BA0) & 0x1000000)
 		;
