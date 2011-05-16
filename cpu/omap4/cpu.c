@@ -91,15 +91,18 @@ int cpu_init (void)
 	 */
 	__raw_writel(0x00084000, SYSCTRL_PADCONF_CORE_EFUSE_2);
 
-	if (es_revision >= OMAP4430_ES2_2) {
-		/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
-		if (!__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL)) {
-			/* Set M factor to max (2.7) */
-			__raw_writel(0x0401040f, IVA_LDOSRAM_VOLTAGE_CTRL);
-			__raw_writel(0x0401040f, MPU_LDOSRAM_VOLTAGE_CTRL);
-			__raw_writel(0x0401040f, CORE_LDOSRAM_VOLTAGE_CTRL);
-			__raw_writel(0x000001c0, SYSCTRL_PADCONF_CORE_EFUSE_1);
-		}
+	/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
+	if ((OMAP4460_ES1_0 == es_revision) &&
+		(((__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL) &
+					   ~(0x3e0)) == 0x0)) ||
+		((es_revision >= OMAP4430_ES2_2) &&
+			 (es_revision < OMAP4460_ES1_0) &&
+			 (!(__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL))))) {
+		/* Set M factor to max (2.7) */
+		__raw_writel(0x0401040f, IVA_LDOSRAM_VOLTAGE_CTRL);
+		__raw_writel(0x0401040f, MPU_LDOSRAM_VOLTAGE_CTRL);
+		__raw_writel(0x0401040f, CORE_LDOSRAM_VOLTAGE_CTRL);
+		__raw_writel(0x000001c0, SYSCTRL_PADCONF_CORE_EFUSE_1);
 	}
 
 	return 0;
