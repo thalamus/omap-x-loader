@@ -34,6 +34,11 @@
 #include <part.h>
 #include <fat.h>
 #include <mmc.h>
+#include <asm/io.h>
+#include <asm/arch/bits.h>
+#include <asm/arch/clocks.h>
+#include <asm/arch/sys_proto.h>
+
 
 #ifdef CFG_PRINTF
 int print_info(void)
@@ -102,6 +107,72 @@ int mmc_read_bootloader(int dev)
 }
 #endif
 
+/*
+ * OMAP On-die temperature sensor check.
+ * If the current temperature value is
+ * greater than T_SHUT_HOT stop boot
+ */
+
+void omap_temp_sensor_check(void)
+{
+	u32 temp;
+
+	/* Set the counter to 1 ms */
+	sr32(CORE_BANDGAP_COUNTER, BGAP_COUNTER_START_BIT,
+			BGAP_COUNTER_NUM_BITS, BGAP_COUNTER_VALUE);
+
+	/* Enable continuous mode. */
+	sr32(CORE_BANDGAP_CTRL, BGAP_SINGLE_MODE_START_BIT,
+			BGAP_SINGLE_MODE_NUM_BITS, BGAP_CONTINUOUS_MODE);
+
+	/* Wait till the first conversion is done wait for at least 1ms */
+	spin_delay(20000);
+
+	/* Read the temperature adc_value */
+	temp = readl(CORE_TEMP_SENSOR);
+	temp = temp & BGAP_TEMP_SENSOR_DTEMP_MASK;
+
+	/* If the samples are untrimmed divide by 1.2 */
+	if (readl(STD_FUSE_OPP_BGAP) == 0)
+		temp = temp * 5 / 6;
+
+	/*
+	 * Compare with TSHUT high temperature. If high ask the
+	 * user to shut down and restart after sometime else
+	 * Disable continuous mode.
+	 */
+	if (temp < TSHUT_HIGH_ADC_CODE) {
+		/* Disable contiuous mode */
+		sr32(CORE_BANDGAP_CTRL, BGAP_SINGLE_MODE_START_BIT,
+			BGAP_SINGLE_MODE_NUM_BITS, ~BGAP_CONTINUOUS_MODE);
+	} else {
+		printf("OMAP chip temperature is too high!!!\n");
+		printf("Please power off and try booting after sometime\n");
+
+		/* Bypass MPU, CORE, IVA, PER, ABE, USB DPLLs */
+		sr32(CM_CLKMODE_DPLL_MPU, 0, 3, PLL_FAST_RELOCK_BYPASS);
+		wait_on_value(BIT0, 0, CM_IDLEST_DPLL_MPU, LDELAY);
+
+		sr32(CM_CLKMODE_DPLL_CORE, 0, 3, PLL_FAST_RELOCK_BYPASS);
+		wait_on_value(BIT0, 0, CM_IDLEST_DPLL_CORE, LDELAY);
+
+		sr32(CM_CLKMODE_DPLL_IVA, 0, 3, PLL_FAST_RELOCK_BYPASS);
+		wait_on_value(BIT0, 0, CM_IDLEST_DPLL_IVA, LDELAY);
+
+		sr32(CM_CLKMODE_DPLL_PER, 0, 3, PLL_FAST_RELOCK_BYPASS);
+		wait_on_value(BIT0, 0, CM_IDLEST_DPLL_PER, LDELAY);
+
+		sr32(CM_CLKMODE_DPLL_ABE, 0, 3, PLL_FAST_RELOCK_BYPASS);
+		wait_on_value(BIT0, 0, CM_IDLEST_DPLL_ABE, LDELAY);
+
+		sr32(CM_CLKMODE_DPLL_USB, 0, 3, PLL_FAST_RELOCK_BYPASS);
+		wait_on_value(BIT0, 0, CM_IDLEST_DPLL_USB, LDELAY);
+
+		while (1);
+	}
+}
+
+
 extern int do_load_serial_bin(ulong offset, int baudrate);
 
 #define __raw_readl(a)	(*(volatile unsigned int *)(a))
@@ -121,6 +192,7 @@ void start_armboot (void)
 
 	omap4_rev = omap_revision();
 	if (omap4_rev >= OMAP4460_ES1_0) {
+		omap_temp_sensor_check();
 		si_type = omap4_silicon_type();
 		if (si_type == PROD_ID_1_SILICON_TYPE_HIGH_PERF)
 			printf("OMAP4460: 1.5 GHz capable SOM\n");

@@ -771,6 +771,10 @@ static void enable_all_clocks(void)
 	sr32(CM_WKUP_KEYBOARD_CLKCTRL, 0, 32, 0x2);
 	wait_on_value(BIT17|BIT16, 0, CM_WKUP_KEYBOARD_CLKCTRL, LDELAY);
 
+	/* Enable fucntional clock of on-die temperature sensor */
+	if (omap_revision() >= OMAP4460_ES1_0)
+		sr32(CM_WKUP_BANDGAP_CLKCTRL, 8, 1, 0x1);
+
 	sr32(CM_SDMA_CLKSTCTRL, 0, 32, 0x0);
 	sr32(CM_MEMIF_CLKSTCTRL, 0, 32, 0x3);
 	sr32(CM_MEMIF_EMIF_1_CLKCTRL, 0, 32, 0x1);
