@@ -52,9 +52,20 @@ u32 running_in_sram(void);
 u32 running_in_flash(void);
 u32 running_from_internal_boot(void);
 u32 get_device_type(void);
+u32 omap4_silicon_type(void);
 
 void sr32(u32 addr, u32 start_bit, u32 num_bits, u32 value);
 u32 wait_on_value(u32 read_bit_mask, u32 match_value, u32 read_addr, u32 bound);
 void sdelay(unsigned long loops);
+
+/* extract a bit field from a bit vector */
+#define get_bit_field(nr, start, mask)\
+	(((nr) & (mask)) >> (start))
+
+/* Set a field in a bit vector */
+#define set_bit_field(nr, start, mask, val)\
+	do { \
+		(nr) = ((nr) & ~(mask)) | (((val) << (start)) & (mask));\
+	} while (0);
 
 #endif

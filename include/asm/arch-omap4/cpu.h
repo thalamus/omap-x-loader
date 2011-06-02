@@ -170,6 +170,12 @@
 #define CM_WKUP_RTC_CLKCTRL		0x4a307880
 #define CM_WKUP_BANDGAP_CLKCTRL		0x4a307888
 
+/* DEVICE_PRM Registers */
+#define PRM_VC_VAL_BYPASS               0x4a307ba0
+#define PRM_VC_CFG_CHANNEL              0x4a307ba4
+#define PRM_VC_CFG_I2C_MODE             0x4a307ba8
+#define PRM_VC_CFG_I2C_CLK              0x4a307bac
+
 /* CM1.CKGEN module registers */
 #define CM_CLKSEL_CORE				0x4a004100
 #define CM_CLKSEL_ABE				0x4a004108
@@ -221,6 +227,7 @@
 #define CM_DIV_M5_DPLL_DDRPHY			0x4a00423c
 #define CM_DIV_M6_DPLL_DDRPHY			0x4a004240
 #define CM_SSC_DELTAMSTEP_DPLL_DDRPHY		0x4a004248
+#define CM_MPU_MPU_CLKCTRL			0x4a004320
 
 /* CM1.ABE register offsets */
 #define CM1_ABE_CLKSTCTRL		0x4a004500
@@ -457,6 +464,14 @@
 #define CORE_LDOSRAM_VOLTAGE_CTRL	0x4A002328
 #define SYSCTRL_PADCONF_CORE_EFUSE_1	0x4A100700
 #define SYSCTRL_PADCONF_CORE_EFUSE_2	0x4A100704
+#define CONTROL_LPDDR2IO1_0		0x4A100638
+#define CONTROL_LPDDR2IO1_1		0x4A10063C
+#define CONTROL_LPDDR2IO1_2		0x4A100640
+#define CONTROL_LPDDR2IO1_3		0x4A100644
+#define CONTROL_LPDDR2IO2_0		0x4A100648
+#define CONTROL_LPDDR2IO2_1		0x4A10064C
+#define CONTROL_LPDDR2IO2_2		0x4A100650
+#define CONTROL_LPDDR2IO2_3		0x4A100654
 
 /* I2C base */
 #define I2C_BASE1		(OMAP44XX_L4_PER + 0x70000)
@@ -468,6 +483,8 @@
 #define EMIF1_BASE			0x4c000000
 #define EMIF2_BASE			0x4d000000
 #define DMM_BASE			0x4e000000
+#define MA_BASE				0x482AF000
+
 /* EMIF */
 #define EMIF_MOD_ID_REV			0x0000
 #define EMIF_STATUS			0x0004
@@ -512,6 +529,34 @@
 	extern void lcd_disable(void);
 	extern void lcd_panel_disable(void);
 #endif
+
+
+/* PRM_VC_VAL_BYPASS */
+#define PRM_VC_I2C_CHANNEL_FREQ_KHZ     400
+
+#define PRM_VC_VAL_BYPASS_VALID_BIT     0x1000000
+#define PRM_VC_VAL_BYPASS_SLAVEADDR_SHIFT       0
+#define PRM_VC_VAL_BYPASS_SLAVEADDR_MASK        0x7F
+#define PRM_VC_VAL_BYPASS_REGADDR_SHIFT         8
+#define PRM_VC_VAL_BYPASS_REGADDR_MASK          0xFF
+#define PRM_VC_VAL_BYPASS_DATA_SHIFT            16
+#define PRM_VC_VAL_BYPASS_DATA_MASK             0xFF
+
+/* TPS */
+#define TPS62361_I2C_SLAVE_ADDR         0x60
+#define TPS62361_REG_ADDR_SET0          0x0
+#define TPS62361_REG_ADDR_SET1          0x1
+#define TPS62361_REG_ADDR_SET2          0x2
+#define TPS62361_REG_ADDR_SET3          0x3
+#define TPS62361_REG_ADDR_CTRL          0x4
+#define TPS62361_REG_ADDR_TEMP          0x5
+#define TPS62361_REG_ADDR_RMP_CTRL      0x6
+#define TPS62361_REG_ADDR_CHIP_ID       0x8
+#define TPS62361_REG_ADDR_CHIP_ID_2     0x9
+
+#define TPS62361_BASE_VOLT_MV   500
+#define TPS62361_VSEL0_GPIO     7
+
 
 /* Cortex-A9 revisions */
 #define MIDR_CORTEX_A9_R0P1     0x410FC091

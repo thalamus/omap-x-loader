@@ -36,7 +36,10 @@
 #include <asm/arch/bits.h>
 #include <asm/arch/cpu.h>
 #include <asm/arch/sys_proto.h>
-#include <asm/arch/smc.h>
+#include <asm/arch/rom_hal_api.h>
+#include <asm/arch/clocks.h>
+#include <asm/arch/rom_public_api_func.h>
+
 
 /* See also ARM Ref. Man. */
 #define C1_MMU		(1<<0)		/* mmu off/on */
@@ -58,17 +61,21 @@ int cpu_init (void)
 
 	es_revision = omap_revision();
 
+	/* OMAP 4430 ES1.0 is the only device rev that does not support
+	 * modifying PL310.POR. Thus this is will be applied for any 4430 rev
+	 * (except 1.0) and any 4460 */
 	if (es_revision > OMAP4430_ES1_0 && get_device_type() != GP_DEVICE) {
 		/* Set PL310 Prefetch Offset Register w/PPA svc*/
 		omap_smc_ppa(PPA_SERVICE_PL310_POR, 0, 0x7, 1, PL310_POR);
 		/* Enable L2 data prefetch */
-		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
+		omap_smc_rom(ROM_SERVICE_PL310_AUXCR,
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
+	/* This ROM svc is availble only for OMAP4430 ES2.2 or any 4460 */
 	} else if (es_revision > OMAP4430_ES2_1) {
 		/* Set PL310 Prefetch Offset Register using ROM svc */
-		omap_smc_rom(ROM_SERVICE_PL310_POR_SVC, PL310_POR);
+		omap_smc_rom(ROM_SERVICE_PL310_POR, PL310_POR);
 		/* Enable L2 data prefetch */
-		omap_smc_rom(ROM_SERVICE_PL310_AUXCR_SVC,
+		omap_smc_rom(ROM_SERVICE_PL310_AUXCR,
 			__raw_readl(OMAP44XX_PL310_AUX_CTRL) | 0x10000000);
 	}
 
@@ -83,15 +90,19 @@ int cpu_init (void)
 	 * smart IO P:0/N:0 as per recomendation
 	 */
 	__raw_writel(0x00084000, SYSCTRL_PADCONF_CORE_EFUSE_2);
-	if (es_revision == OMAP4430_ES2_2) {
-		/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
-		if (!__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL)) {
-			/* Set M factor to max (2.7) */
-			__raw_writel(0x0401040f, IVA_LDOSRAM_VOLTAGE_CTRL);
-			__raw_writel(0x0401040f, MPU_LDOSRAM_VOLTAGE_CTRL);
-			__raw_writel(0x0401040f, CORE_LDOSRAM_VOLTAGE_CTRL);
-			__raw_writel(0x000001c0, SYSCTRL_PADCONF_CORE_EFUSE_1);
-		}
+
+	/*if MPU_VOLTAGE_CTRL is 0x0 unit is not trimmed*/
+	if ((OMAP4460_ES1_0 == es_revision) &&
+		(((__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL) &
+					   ~(0x3e0)) == 0x0)) ||
+		((es_revision >= OMAP4430_ES2_2) &&
+			 (es_revision < OMAP4460_ES1_0) &&
+			 (!(__raw_readl(IVA_LDOSRAM_VOLTAGE_CTRL))))) {
+		/* Set M factor to max (2.7) */
+		__raw_writel(0x0401040f, IVA_LDOSRAM_VOLTAGE_CTRL);
+		__raw_writel(0x0401040f, MPU_LDOSRAM_VOLTAGE_CTRL);
+		__raw_writel(0x0401040f, CORE_LDOSRAM_VOLTAGE_CTRL);
+		__raw_writel(0x000001c0, SYSCTRL_PADCONF_CORE_EFUSE_1);
 	}
 
 	return 0;
@@ -141,6 +152,15 @@ unsigned int omap_revision(void)
 	}
 }
 
+u32 omap4_silicon_type(void)
+{
+	u32 si_type = readl(STD_FUSE_PROD_ID_1);
+	si_type = get_bit_field(si_type, PROD_ID_1_SILICON_TYPE_SHIFT,
+		PROD_ID_1_SILICON_TYPE_MASK);
+	return si_type;
+}
+
+
 u32 get_device_type(void)
 {
 	/*
@@ -177,9 +197,40 @@ unsigned int fat_boot(void)
 		return 0;
 }
 
-#if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
+static void do_scale_tps62361(u32 reg, u32 val)
+{
+	u32 temp = 0;
+	u32 l = 0;
+
+	/*
+	 * Select SET1 in TPS62361:
+	 * VSEL1 is grounded on board. So the following selects
+	 * VSEL1 = 0 and VSEL0 = 1
+	 */
+
+	/* set GPIO-7 direction as output */
+	l = __raw_readl(0x4A310134);
+	l &= ~(1 << TPS62361_VSEL0_GPIO);
+	__raw_writel(l, 0x4A310134);
+
+	/* set GPIO-7 data-out */
+	l = 1 << TPS62361_VSEL0_GPIO;
+	__raw_writel(l, 0x4A310194);
+
+	temp = TPS62361_I2C_SLAVE_ADDR |
+		(reg << PRM_VC_VAL_BYPASS_REGADDR_SHIFT) |
+		(val << PRM_VC_VAL_BYPASS_DATA_SHIFT) |
+		PRM_VC_VAL_BYPASS_VALID_BIT;
+
+	writel(temp, PRM_VC_VAL_BYPASS);
+
+	while (readl(PRM_VC_VAL_BYPASS) & PRM_VC_VAL_BYPASS_VALID_BIT)
+                ;
+}
+
 static void scale_vcores(void)
 {
+	u32 volt;
 	unsigned int rev = omap_revision();
 	/* For VC bypass only VCOREx_CGF_FORCE  is necessary and
 	 * VCOREx_CFG_VOLTAGE  changes can be discarded
@@ -189,9 +240,20 @@ static void scale_vcores(void)
 	/* PRM_VC_CFG_I2C_CLK */
 	__raw_writel(0x6026, 0x4A307BAC);
 
+	/* Enable 1.3V from TPS for vdd_mpu on 4460 */
+	if (rev >= OMAP4460_ES1_0) {
+		volt = 1300;
+		volt -= TPS62361_BASE_VOLT_MV;
+		volt /= 10;
+		do_scale_tps62361(TPS62361_REG_ADDR_SET1, volt);
+	}
+
 	/* set VCORE1 force VSEL */
 	/* PRM_VC_VAL_BYPASS) */
-        if(rev == OMAP4430_ES1_0)
+	/* VCORE 1 - vdd_core on 4460 and vdd_mpu on 4430*/
+	if (rev >= OMAP4460_ES1_0)
+		__raw_writel(0x305512, 0x4A307BA0);
+	else if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x3B5512, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x3A5512, 0x4A307BA0);
@@ -208,10 +270,15 @@ static void scale_vcores(void)
 
 	/* FIXME: set VCORE2 force VSEL, Check the reset value */
 	/* PRM_VC_VAL_BYPASS) */
+	/* VCORE 2 - vdd_iva on both 4430/4460 */
         if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x315B12, 0x4A307BA0);
 	else
+#ifdef CONFIG_4460SDP
+		__raw_writel(0x305B12, 0x4A307BA0);
+#else
 		__raw_writel(0x295B12, 0x4A307BA0);
+#endif
 	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
 	while(__raw_readl(0x4A307BA0) & 0x1000000)
 		;
@@ -221,7 +288,10 @@ static void scale_vcores(void)
 
 	/*/set VCORE3 force VSEL */
 	/* PRM_VC_VAL_BYPASS */
-        if(rev == OMAP4430_ES1_0)
+	/* VCORE 3 - vdd_core on 4430, none for 4460 */
+	if (rev >= OMAP4460_ES1_0)
+		return;
+	else if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x316112, 0x4A307BA0);
 	else if (rev == OMAP4430_ES2_0)
 		__raw_writel(0x296112, 0x4A307BA0);
@@ -237,7 +307,6 @@ static void scale_vcores(void)
 	__raw_writel(__raw_readl(0x4A306010), 0x4A306010);
 
 }
-#endif
 
 
 
@@ -251,10 +320,12 @@ void s_init(void)
 	set_muxconf_regs();
 	spin_delay(100);
 
+	/* WKUP clocks */
+	sr32(CM_WKUP_GPIO1_CLKCTRL, 0, 32, 0x1);
+	wait_on_value(BIT17|BIT16, 0, CM_WKUP_GPIO1_CLKCTRL, LDELAY);
+
 	/* Set VCORE1 = 1.3 V, VCORE2 = VCORE3 = 1.21V */
-#if defined(CONFIG_MPU_600) || defined(CONFIG_MPU_1000)
 	scale_vcores();
-#endif	
 
 	prcm_init();
 	ddr_init();

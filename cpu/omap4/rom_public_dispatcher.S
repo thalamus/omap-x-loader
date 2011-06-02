@@ -17,11 +17,11 @@
 #include <config.h>
 #include <asm/arch/cpu.h>
 #include <asm/arch/omap4430.h>
-#include <asm/arch/smc.h>
+#include <asm/arch/rom_hal_api.h>
 
 /**
- * omap_smc_rom() - This function is the entry point to api's exposed by
- *		    ROM code
+ * omap_smc_rom() - This function is the entry point to services
+ *		    exposed by ROM code
  * Prototype:
  * unsigned int omap_smc_rom(unsigned int rom_svc,
  *		unsigned int arg);

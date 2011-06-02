@@ -40,6 +40,9 @@
 #define PLL_FAST_RELOCK_BYPASS 6  /* CORE */
 #define PLL_LOCK        7         /* MPU, IVA, CORE & PER */
 
+/* CM_IDLEST_DPLL fields */
+#define ST_DPLL_CLK_MASK                1
+
 /* The following configurations are OPP and SysClk value independant
  * and hence are defined here. All the other DPLL related values are
  * tabulated in lowlevel_init.S.
