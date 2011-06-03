@@ -271,14 +271,13 @@ static void scale_vcores(void)
 	/* FIXME: set VCORE2 force VSEL, Check the reset value */
 	/* PRM_VC_VAL_BYPASS) */
 	/* VCORE 2 - vdd_iva on both 4430/4460 */
-        if(rev == OMAP4430_ES1_0)
+	if(rev == OMAP4430_ES1_0)
 		__raw_writel(0x315B12, 0x4A307BA0);
-	else
-#ifdef CONFIG_4460SDP
+	else if (rev >= OMAP4460_ES1_0)
 		__raw_writel(0x305B12, 0x4A307BA0);
-#else
+	else
 		__raw_writel(0x295B12, 0x4A307BA0);
-#endif
+
 	__raw_writel(__raw_readl(0x4A307BA0) | 0x1000000, 0x4A307BA0);
 	while(__raw_readl(0x4A307BA0) & 0x1000000)
 		;
