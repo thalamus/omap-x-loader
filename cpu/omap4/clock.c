@@ -432,18 +432,11 @@ static void configure_abe_dpll(u32 clk_index)
 	sr32(CM_AUTOIDLE_DPLL_ABE, 0, 3, 0x0);
 
 	/*
-	 * Enable higher frequencies when fed from 32KHz clk.  Sets
-	 * DPLL_REGM4XEN, DPLL_LPMODE, DPLL_RELOCK_RAMP_EN, DPLL_RAMP_RATE and
-	 * DPLL_DRIFTGUARD_EN in the CM_CLKMODE_DPLL_ABE register.
+	 * Enable higher frequencies when fed from 32KHz clk.
 	 *
-	 * Public TRM does not cover all of this: DPLL_RAMP_RATE (bit 5)
-	 * selects time spent at each stage of clock ramping process.  We
-	 * spend 4 REFCLKs.  DPLL_RELOCK_RAMP_EN (bit 9) enables the clock
-	 * ramping feature, using the rate specified in DPLL_RAMP_RATE.
-	 *
-	 * Also the DPLL_REGM4XEN bit provides a magic 4x multplier to
-	 * existing MN dividers.  This is how a DPLL driven from 32KHz clock
-	 * can achieve 196.608MHz.
+	 * The DPLL_REGM4XEN bit provides a magic 4x multplier to existing MN
+	 * dividers.  This is how a DPLL driven from 32KHz clock can achieve
+	 * 196.608MHz.
 	 */
 #ifndef CONFIG_OMAP4_ABE_SYSCK
 	clkmode_value = (BIT5 | BIT8 | BIT9 | BIT10 | BIT11);
