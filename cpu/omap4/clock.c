@@ -311,10 +311,21 @@ static void configure_mpu_dpll(u32 clk_index)
 				break;
 #endif
 			default:
+				/*
+				 * Same M, N as for 600 MHz from M2 output will
+				 * give 1200 MHz from M3 output
+				 */
+				dpll_param_p = &mpu_dpll_param_600mhz[clk_index];
+				dcc_en = 0;
+				emif_div_4 = 1;
+				abe_div_8 = 1;
+				break;
+#if 0
 				dpll_param_p = &mpu_dpll_param_920mhz[clk_index];
 				emif_div_4 = 0;
 				abe_div_8 = 1;
 				break;
+#endif
 		}
 
 		sr32(CM_MPU_MPU_CLKCTRL, 24, 1, emif_div_4);
