@@ -151,11 +151,11 @@ void __ddr_init(void)
 	if (rev >= OMAP4460_ES1_0) {
 		__raw_writel(0x9c9c9c9c, CONTROL_LPDDR2IO1_0);
 		__raw_writel(0x9c9c9c9c, CONTROL_LPDDR2IO1_1);
-		__raw_writel(0x9c9c9c00, CONTROL_LPDDR2IO1_2);
+		__raw_writel(0x9c989c00, CONTROL_LPDDR2IO1_2);
 		__raw_writel(0xa0888c00, CONTROL_LPDDR2IO1_3);
 		__raw_writel(0x9c9c9c9c, CONTROL_LPDDR2IO2_0);
 		__raw_writel(0x9c9c9c9c, CONTROL_LPDDR2IO2_1);
-		__raw_writel(0x9c9c9c00, CONTROL_LPDDR2IO2_2);
+		__raw_writel(0x9c989c00, CONTROL_LPDDR2IO2_2);
 		__raw_writel(0xa0888c00, CONTROL_LPDDR2IO2_3);
 	}
 }
