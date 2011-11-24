@@ -36,5 +36,6 @@ omap_smc_rom:
 	dsb
 	isb
 	dmb
+	.arch_extension sec
 	smc	#0
 	pop {r4-r11,pc}
